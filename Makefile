@@ -1,0 +1,32 @@
+AWS_PROFILE ?= ephemeral
+AWS_SHARED_CREDENTIALS_FILE ?= $(CURDIR)/.aws-credentials
+AWS_REGION ?= us-east-1
+TF_STATE_PARAMETER ?= /ephemeral-aws-sandbox/tfstate/bucket_name
+TF_STATE_KEY ?= $(notdir $(CURDIR))/terraform.tfstate
+
+export AWS_PROFILE AWS_SHARED_CREDENTIALS_FILE AWS_REGION
+
+.PHONY: whoami init plan apply web deploy-app
+
+whoami:
+	aws sts get-caller-identity
+
+init:
+	@bucket="$$(aws ssm get-parameter --name "$(TF_STATE_PARAMETER)" --query 'Parameter.Value' --output text)" && \
+	terraform -chdir=terraform init \
+		-backend-config="bucket=$$bucket" \
+		-backend-config="key=$(TF_STATE_KEY)" \
+		-backend-config="region=$(AWS_REGION)"
+
+plan:
+	terraform -chdir=terraform plan
+
+apply:
+	terraform -chdir=terraform apply
+
+web:
+	@python3 scripts/dev_proxy.py
+
+deploy-app:
+	@bash scripts/deploy_app.sh
+

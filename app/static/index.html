@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>S3 Explorer IDP — Ephemeral JIT Platform</title>
+    <style>
+        :root {
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --bg-card: #334155;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --accent: #38bdf8;
+            --accent-hover: #0284c7;
+            --success: #22c55e;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --border: #475569;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.5;
+            padding: 24px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 24px;
+        }
+
+        .logo-area h1 {
+            font-size: 1.5rem;
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .tag {
+            background: #0369a1;
+            color: #e0f2fe;
+            font-size: 0.75rem;
+            padding: 2px 8px;
+            border-radius: 9999px;
+            text-transform: uppercase;
+            font-weight: 700;
+        }
+
+        .badge-status {
+            background: rgba(34, 197, 94, 0.2);
+            color: var(--success);
+            border: 1px solid var(--success);
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 24px;
+        }
+
+        .card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .card h2 {
+            font-size: 1.1rem;
+            margin-bottom: 14px;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        label {
+            display: block;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+        }
+
+        input, select, button {
+            width: 100%;
+            padding: 10px 12px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            background: var(--bg-card);
+            color: var(--text-primary);
+            font-size: 0.95rem;
+            margin-bottom: 14px;
+        }
+
+        button {
+            background: var(--accent);
+            color: #0f172a;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: background 0.2s;
+        }
+
+        button:hover {
+            background: var(--accent-hover);
+            color: #ffffff;
+        }
+
+        button.btn-danger {
+            background: var(--danger);
+            color: #ffffff;
+        }
+        button.btn-danger:hover {
+            background: #b91c1c;
+        }
+
+        .session-info {
+            background: #0f172a;
+            border-left: 4px solid var(--warning);
+            padding: 12px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            margin-bottom: 14px;
+        }
+
+        .session-active {
+            border-left-color: var(--success);
+        }
+
+        .timer {
+            font-family: monospace;
+            font-weight: bold;
+            color: var(--warning);
+            font-size: 1.1rem;
+        }
+
+        .file-list {
+            list-style: none;
+            margin-top: 10px;
+        }
+
+        .file-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 12px;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.9rem;
+        }
+
+        .file-item:hover {
+            background: var(--bg-card);
+        }
+
+        .file-name {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            color: var(--accent);
+        }
+
+        .breadcrumbs {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+            background: var(--bg-primary);
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+        }
+
+        .breadcrumbs span {
+            cursor: pointer;
+            color: var(--accent);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+            margin-top: 10px;
+        }
+
+        th, td {
+            padding: 8px 10px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            background: var(--bg-card);
+            color: var(--text-secondary);
+        }
+
+        .status-pill {
+            display: inline-block;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
+
+        .status-ALLOWED {
+            background: rgba(34, 197, 94, 0.2);
+            color: var(--success);
+        }
+
+        .status-DENIED {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--danger);
+        }
+
+        .notice {
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 14px;
+            font-size: 0.85rem;
+        }
+        .notice-error {
+            background: rgba(239, 68, 68, 0.15);
+            border: 1px solid var(--danger);
+            color: #fca5a5;
+        }
+        .notice-success {
+            background: rgba(34, 197, 94, 0.15);
+            border: 1px solid var(--success);
+            color: #86efac;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo-area">
+                <h1>🗄️ S3 Explorer IDP <span class="tag">JIT Access</span></h1>
+                <p style="color: var(--text-secondary); font-size: 0.85rem;">Just-In-Time Ephemeral Session Platform</p>
+            </div>
+            <div>
+                <span class="badge-status" id="envBadge">Mode: Sandbox</span>
+            </div>
+        </header>
+
+        <div id="alertBox"></div>
+
+        <div class="grid">
+            <!-- Panel Izquierdo: Gestión de Sesión -->
+            <div>
+                <div class="card">
+                    <h2>1. Solicitar Acceso JIT</h2>
+                    <label for="bucketSelect">Seleccionar Bucket:</label>
+                    <input type="text" id="bucketInput" placeholder="ej: fvrsn-example-1-..." />
+
+                    <label for="durationSelect">Duración de la Sesión STS:</label>
+                    <select id="durationSelect">
+                        <option value="900" selected>15 Minutos (Mínimo STS)</option>
+                        <option value="1800">30 Minutos</option>
+                        <option value="3600">1 Hora</option>
+                    </select>
+
+                    <button id="btnCreateSession">Generar Sesión Efímera</button>
+                </div>
+
+                <div class="card" id="sessionCard">
+                    <h2>2. Sesión Activa (STS)</h2>
+                    <div id="noSessionNotice" style="color: var(--text-secondary); font-size: 0.85rem;">
+                        No hay ninguna sesión activa. Solicitá acceso para comenzar.
+                    </div>
+                    <div id="activeSessionDetails" style="display: none;">
+                        <div class="session-info session-active">
+                            <strong>Bucket Asignado:</strong> <span id="sessBucket" style="color: var(--accent);"></span><br>
+                            <strong>Tiempo Restante:</strong> <span class="timer" id="sessTimer">--:--</span><br>
+                            <strong>Session ID:</strong> <span id="sessId" style="font-family: monospace; font-size: 0.8rem;"></span>
+                        </div>
+                        <p style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 10px;">
+                            🔒 Credenciales restringidas con <strong>STS Session Policy</strong> exclusiva para este bucket.
+                        </p>
+                        <button class="btn-danger" id="btnTestForbidden" style="font-size: 0.85rem; padding: 6px;">
+                            🧪 Probar Acceso Cruzado (Verificar 403 Forbidden)
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Panel Derecho: Explorador S3 y Auditoría -->
+            <div>
+                <div class="card">
+                    <h2>
+                        <span>3. Explorador de Archivos</span>
+                        <button id="btnRefresh" style="width: auto; padding: 4px 10px; font-size: 0.8rem; margin: 0;">↻ Refrescar</button>
+                    </h2>
+
+                    <div class="breadcrumbs" id="breadcrumbs">
+                        <span onclick="navigateTo('')">root</span>
+                    </div>
+
+                    <div id="fileExplorerContent">
+                        <p style="color: var(--text-secondary); font-size: 0.9rem;">
+                            Crea una sesión efímera para inspeccionar objetos.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2>4. Auditoría Fail-Closed (DynamoDB)</h2>
+                    <p style="color: var(--text-secondary); font-size: 0.8rem; margin-bottom: 8px;">
+                        Cada operación se audita en tiempo real con TTL automático.
+                    </p>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Timestamp</th>
+                                <th>Acción</th>
+                                <th>Bucket / Key</th>
+                                <th>Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody id="auditTableBody">
+                            <tr>
+                                <td colspan="4" style="color: var(--text-secondary); text-align: center;">Sin registros aún.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentSession = null;
+        let currentPrefix = "";
+        let timerInterval = null;
+
+        const bucketInput = document.getElementById("bucketInput");
+        const btnCreateSession = document.getElementById("btnCreateSession");
+        const activeSessionDetails = document.getElementById("activeSessionDetails");
+        const noSessionNotice = document.getElementById("noSessionNotice");
+        const sessBucket = document.getElementById("sessBucket");
+        const sessId = document.getElementById("sessId");
+        const sessTimer = document.getElementById("sessTimer");
+        const fileExplorerContent = document.getElementById("fileExplorerContent");
+        const auditTableBody = document.getElementById("auditTableBody");
+        const alertBox = document.getElementById("alertBox");
+
+        function showAlert(msg, type = "success") {
+            alertBox.innerHTML = `<div class="notice notice-${type}">${msg}</div>`;
+            setTimeout(() => { alertBox.innerHTML = ""; }, 5000);
+        }
+
+        async function loadConfig() {
+            try {
+                const res = await fetch("/api/info");
+                const data = await res.json();
+                if (data.default_bucket) {
+                    bucketInput.value = data.default_bucket;
+                }
+                loadAudits();
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        btnCreateSession.addEventListener("click", async () => {
+            const bucket = bucketInput.value.trim();
+            const duration = parseInt(document.getElementById("durationSelect").value, 10);
+            if (!bucket) {
+                showAlert("Por favor ingresá un nombre de bucket.", "error");
+                return;
+            }
+
+            btnCreateSession.disabled = true;
+            btnCreateSession.innerText = "Asumiendo rol en STS...";
+
+            try {
+                const res = await fetch("/api/sessions", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ bucket_name: bucket, duration_seconds: duration })
+                });
+
+                const data = await res.json();
+                if (!res.ok) {
+                    throw new Error(data.message || data.error || "Error al crear sesión");
+                }
+
+                currentSession = data;
+                renderActiveSession();
+                navigateTo("");
+                loadAudits();
+                showAlert("Sesión efímera creada exitosamente en STS.", "success");
+            } catch (err) {
+                showAlert(err.message, "error");
+            } finally {
+                btnCreateSession.disabled = false;
+                btnCreateSession.innerText = "Generar Sesión Efímera";
+            }
+        });
+
+        function renderActiveSession() {
+            if (!currentSession) return;
+            noSessionNotice.style.display = "none";
+            activeSessionDetails.style.display = "block";
+            sessBucket.innerText = currentSession.target_bucket;
+            sessId.innerText = currentSession.session_id;
+
+            if (timerInterval) clearInterval(timerInterval);
+            updateTimer();
+            timerInterval = setInterval(updateTimer, 1000);
+        }
+
+        function updateTimer() {
+            if (!currentSession) return;
+            const now = Math.floor(Date.now() / 1000);
+            const remaining = currentSession.expires_at - now;
+
+            if (remaining <= 0) {
+                sessTimer.innerText = "EXPIRADA";
+                sessTimer.style.color = "var(--danger)";
+                clearInterval(timerInterval);
+                return;
+            }
+
+            const mins = Math.floor(remaining / 60);
+            const secs = remaining % 60;
+            sessTimer.innerText = `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
+        }
+
+        async function navigateTo(prefix) {
+            currentPrefix = prefix;
+            updateBreadcrumbs();
+
+            if (!currentSession) {
+                fileExplorerContent.innerHTML = "<p style='color: var(--text-secondary);'>Generá una sesión para ver archivos.</p>";
+                return;
+            }
+
+            fileExplorerContent.innerHTML = "<p style='color: var(--text-secondary);'>Listando objetos vía STS...</p>";
+
+            try {
+                const res = await fetch(`/api/objects?prefix=${encodeURIComponent(prefix)}`, {
+                    headers: { "X-Session-ID": currentSession.session_id }
+                });
+                const data = await res.json();
+
+                if (!res.ok) {
+                    throw new Error(data.message || "Error al listar objetos");
+                }
+
+                renderFiles(data);
+                loadAudits();
+            } catch (err) {
+                fileExplorerContent.innerHTML = `<div class='notice notice-error'>Error al listar: ${err.message}</div>`;
+                loadAudits();
+            }
+        }
+
+        function updateBreadcrumbs() {
+            const bc = document.getElementById("breadcrumbs");
+            let html = `<span onclick="navigateTo('')">root</span>`;
+            if (currentPrefix) {
+                const parts = currentPrefix.split("/").filter(Boolean);
+                let acc = "";
+                for (const p of parts) {
+                    acc += p + "/";
+                    html += ` / <span onclick="navigateTo('${acc}')">${p}</span>`;
+                }
+            }
+            bc.innerHTML = html;
+        }
+
+        function renderFiles(data) {
+            let html = "<ul class='file-list'>";
+
+            // Subdirectorios
+            for (const dir of data.subdirectories || []) {
+                const name = dir.replace(data.prefix, "");
+                html += `
+                    <li class="file-item">
+                        <span class="file-name" onclick="navigateTo('${dir}')">📁 ${name}</span>
+                        <span style="color: var(--text-secondary); font-size: 0.8rem;">Directorio</span>
+                    </li>
+                `;
+            }
+
+            // Objetos
+            for (const obj of data.objects || []) {
+                const name = obj.key.replace(data.prefix, "");
+                const sizeKb = (obj.size / 1024).toFixed(1);
+                html += `
+                    <li class="file-item">
+                        <span class="file-name" onclick="viewObject('${obj.key}')">📄 ${name}</span>
+                        <span style="color: var(--text-secondary); font-size: 0.8rem;">${sizeKb} KB</span>
+                    </li>
+                `;
+            }
+
+            if ((!data.subdirectories || data.subdirectories.length === 0) && (!data.objects || data.objects.length === 0)) {
+                html += `<li class="file-item" style="color: var(--text-secondary);">El bucket o prefijo está vacío.</li>`;
+            }
+
+            html += "</ul>";
+            fileExplorerContent.innerHTML = html;
+        }
+
+        async function viewObject(key) {
+            if (!currentSession) return;
+            try {
+                const res = await fetch(`/api/objects/content?key=${encodeURIComponent(key)}`, {
+                    headers: { "X-Session-ID": currentSession.session_id }
+                });
+                if (!res.ok) {
+                    const err = await res.json();
+                    throw new Error(err.message || "Error al descargar");
+                }
+                const text = await res.text();
+                alert(`Contenido de ${key}:\n\n` + text.slice(0, 500) + (text.length > 500 ? "\n..." : ""));
+                loadAudits();
+            } catch (e) {
+                showAlert(e.message, "error");
+            }
+        }
+
+        document.getElementById("btnTestForbidden").addEventListener("click", async () => {
+            if (!currentSession) return;
+            showAlert("Intentando acceder a un bucket no autorizado con la misma sesión...", "error");
+            try {
+                const res = await fetch(`/api/test-forbidden`, {
+                    method: "POST",
+                    headers: { "X-Session-ID": currentSession.session_id }
+                });
+                const data = await res.json();
+                if (res.status === 403) {
+                    showAlert("✅ Frontera de seguridad verificada: AWS rechazó el acceso (403 AccessDenied) y fue auditado en DynamoDB.", "success");
+                } else {
+                    showAlert("Respuesta inesperada: " + JSON.stringify(data), "error");
+                }
+                loadAudits();
+            } catch (e) {
+                showAlert("Error en la prueba: " + e.message, "error");
+            }
+        });
+
+        document.getElementById("btnRefresh").addEventListener("click", () => {
+            navigateTo(currentPrefix);
+            loadAudits();
+        });
+
+        async function loadAudits() {
+            try {
+                const res = await fetch("/api/audits");
+                const data = await res.json();
+                if (data.items && data.items.length > 0) {
+                    auditTableBody.innerHTML = data.items.map(item => `
+                        <tr>
+                            <td>${new Date(item.timestamp * 1000).toLocaleTimeString()}</td>
+                            <td><code>${item.action}</code></td>
+                            <td>${item.bucket} ${item.key ? ' / ' + item.key : ''}</td>
+                            <td><span class="status-pill status-${item.status}">${item.status}</span></td>
+                        </tr>
+                    `).join("");
+                }
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        loadConfig();
+    </script>
+</body>
+</html>
