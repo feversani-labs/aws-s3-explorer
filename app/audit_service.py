@@ -108,6 +108,32 @@ class AuditService:
         except ClientError as e:
             raise RuntimeError(f"Fail-Closed: error al registrar auditoría en DynamoDB: {e.response['Error']['Message']}")
 
+    def get_session_audits(self, session_id: str, limit: int = 50) -> list:
+        """
+        Recupera el historial de auditoría de una sesión específica utilizando
+        la clave primaria PK=SESSION#{session_id} y prefijo de SK=AUDIT#.
+        """
+        if not self.table or not session_id:
+            return []
+
+        try:
+            from boto3.dynamodb.conditions import Key
+            resp = self.table.query(
+                KeyConditionExpression=Key("PK").eq(f"SESSION#{session_id}") & Key("SK").begins_with("AUDIT#"),
+                ScanIndexForward=False,
+                Limit=limit
+            )
+            items = resp.get("Items", [])
+            for item in items:
+                if "timestamp" in item:
+                    item["timestamp"] = int(item["timestamp"])
+            return items
+        except Exception as e:
+            print(f"[AuditService] query error for session {session_id}: {e}")
+            # Fallback a escaneo filtrado
+            all_audits = self.get_recent_audits(limit=limit)
+            return [i for i in all_audits if i.get("session_id") == session_id]
+
     def get_recent_audits(self, limit: int = 50) -> list:
         """
         Recupera los últimos registros de auditoría si la tabla existe.

@@ -106,6 +106,12 @@ fi
 USER_NAME="${USERNAME:-dfeversani}"
 USER_EMAIL="${EMAIL:-dev@feversani.internal}"
 ACCOUNT_ID="${AWS_ACCOUNT_ID:-}"
+
+# Si no se pasó AWS_ACCOUNT_ID, resolver automáticamente la cuenta actual de Sandbox
+if [ -z "${ACCOUNT_ID}" ]; then
+  ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text 2>/dev/null || true)
+fi
+
 DURATION="${DURATION_MINUTES:-15}"
 
 ENDPOINT="${ALB_URL}/api/provision-session"

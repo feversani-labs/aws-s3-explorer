@@ -1,4 +1,4 @@
-# S3 Explorer IDP — Ephemeral Just-In-Time Access Platform
+# AWS S3 Explorer IDP — Just-In-Time Developer Portal for Amazon S3 Buckets
 
 **Internal Developer Platform (IDP)** web con arquitectura de **ALB Público + EC2 Privado (Docker)** que permite a los desarrolladores explorar buckets específicos de Amazon S3 mediante sesiones efímeras acotadas dinámicamente con **AWS STS Session Policies**, garantizando principio de mínimo privilegio (*Just-In-Time Access*), soporte para **Magic Links (`?session=UUID`)**, aprovisionamiento vía Webhook, operaciones **CRUD completas sobre S3** y **auditoría enriquecida Fail-Closed** en DynamoDB.
 
@@ -79,16 +79,22 @@ El portal permite habilitar o deshabilitar las opciones de prueba dummy en la p�
 * Sección opcional de prueba (si `ENABLE_SANDBOX=true`) para generar una sesión efímera instantánea.
 
 ### B. Vista de Sesión Activa (Con Magic Link `?session=UUID`)
-* **Banner de Sesión:** Muestra Bucket asignado, Usuario, Correo, Cuenta AWS y un **contador regresivo en vivo** de la sesión STS con botón para salir.
-* **Explorador de Archivos a pantalla completa:**
-  * Breadcrumbs de navegación (`root / carpeta / ...`).
-  * ➕ **Nuevo Archivo / Subir (`Create / PutObject`):** Modal para crear o subir archivos indicando nombre y contenido.
-  * 📁 **Nueva Carpeta:** Crea carpetas/prefijos en el bucket.
-  * 👁️ **Ver (`Read / GetObject`):** Abre un visor modal con el contenido del objeto.
-  * ✏️ **Editar (`Update / PutObject`):** Abre un editor modal con el contenido cargado para modificarlo y guardarlo directamente en S3.
-  * 🗑️ **Eliminar (`Delete / DeleteObject`):** Confirmación y borrado directo en S3.
+* **Banner de Sesión:** Muestra Bucket asignado, Usuario, Correo, Cuenta AWS, contador regresivo en vivo de la sesión STS y el botón **`📋 Auditoría de la Sesión`**.
+* **Explorador de Archivos con Drag & Drop, Búsqueda y Paginación:**
+  * 📂 **Drag & Drop desde la PC:** Arrastrá y soltá uno o varios archivos directamente sobre la pantalla para subirlos automáticamente a S3 en la carpeta actual (soporta texto y binarios en Base64).
+  * 📤 **Subir desde PC:** Selector tradicional de archivos locales del sistema operativo.
+  * 🔍 **Búsqueda en tiempo real:** Barra de filtrado instantáneo por nombre de archivo o carpeta.
+  * 📄 **Paginación:** Configurable en 10, 25 o 50 items por página con navegación anterior/siguiente.
+  * ➕ **Nuevo Archivo / Nueva Carpeta:** Creación manual con modal.
+  * 👁️ **Ver:** Visor modal de contenido de texto.
+  * 📥 **Descargar:** Descarga directa del archivo a la PC local (`Content-Disposition: attachment`).
+  * ✏️ **Editar:** Editor interactivo para modificar el contenido y guardarlo en S3 (`s3:PutObject`).
+  * 🗑️ **Eliminar:** Diálogo de confirmación y borrado en S3 (`s3:DeleteObject`).
   * 🧪 **Test 403:** Prueba la frontera de seguridad intentando acceder a otro bucket ajeno y verifica el rechazo de AWS STS.
-* **Auditoría Fail-Closed en Tiempo Real (DynamoDB):** Ubicada debajo del explorador, registra cada clic y operación (`ALLOWED` o `DENIED`).
+* **Modal Dedicado de Auditoría de la Sesión (`📋 Auditoría de la Sesión`):**
+  * Consulta en DynamoDB filtrada específicamente por el Partition Key `SESSION#<session_id>`.
+  * Filtro por texto y estado (`ALLOWED` / `DENIED`).
+  * Paginación integrada de eventos de auditoría.
 
 ---
 

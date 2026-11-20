@@ -182,6 +182,18 @@ class S3ExplorerHandler(BaseHTTPRequestHandler):
                     session_id=session_id,
                     session_meta=session_data
                 )
+
+                filename = os.path.basename(key) or "download"
+                if query.get("download") == "true":
+                    self.send_response(200)
+                    self.send_header("Content-Type", "application/octet-stream")
+                    self.send_header("Content-Disposition", f'attachment; filename="{filename}"')
+                    self.send_header("Content-Length", str(len(content)))
+                    self.send_header("Access-Control-Allow-Origin", "*")
+                    self.end_headers()
+                    self.wfile.write(content)
+                    return
+
                 return self._send_response(200, content, content_type="text/plain; charset=utf-8")
             except ClientError as e:
                 code = e.response["Error"]["Code"]
@@ -190,9 +202,13 @@ class S3ExplorerHandler(BaseHTTPRequestHandler):
                     "message": e.response["Error"]["Message"]
                 })
 
-        # 6. Registros de auditoría
+        # 6. Registros de auditoría (filtrados por sesión o globales)
         if path == "/api/audits":
-            items = audit_service.get_recent_audits(limit=50)
+            session_id = query.get("session_id") or self.headers.get("X-Session-ID")
+            if session_id:
+                items = audit_service.get_session_audits(session_id=session_id, limit=100)
+            else:
+                items = audit_service.get_recent_audits(limit=100)
             return self._send_response(200, {"items": items})
 
         return self._send_response(404, {"error": "Not Found"})
@@ -256,11 +272,17 @@ class S3ExplorerHandler(BaseHTTPRequestHandler):
             data = self._read_body_json()
             key = data.get("key", "").strip().lstrip("/")
             content = data.get("content", "")
+            is_base64 = data.get("is_base64", False)
             if not key:
                 return self._send_response(400, {"error": "El nombre del archivo (key) es requerido"})
 
             try:
-                body_bytes = content.encode("utf-8") if isinstance(content, str) else content
+                if is_base64:
+                    import base64
+                    body_bytes = base64.b64decode(content)
+                else:
+                    body_bytes = content.encode("utf-8") if isinstance(content, str) else content
+
                 s3_service.put_object(
                     bucket=session_data["target_bucket"],
                     key=key,

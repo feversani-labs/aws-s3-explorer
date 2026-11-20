@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>S3 Explorer IDP — Ephemeral JIT Platform</title>
+    <title>AWS S3 Explorer IDP — Just-In-Time Platform</title>
     <style>
         :root {
             --bg-primary: #0f172a;
@@ -73,6 +73,7 @@
             border-radius: 8px;
             padding: 22px;
             margin-bottom: 20px;
+            position: relative;
         }
 
         .card h2 {
@@ -116,6 +117,7 @@
             gap: 6px;
             background: var(--accent);
             color: #0f172a;
+            white-space: nowrap;
         }
 
         button:hover {
@@ -151,8 +153,8 @@
         }
 
         .btn-sm {
-            padding: 4px 8px;
-            font-size: 0.78rem;
+            padding: 5px 10px;
+            font-size: 0.8rem;
         }
 
         /* Banner de Sesión Activa */
@@ -193,13 +195,13 @@
             border: 1px solid rgba(245, 158, 11, 0.3);
         }
 
-        /* Barra de herramientas CRUD */
+        /* Barra de herramientas CRUD y Búsqueda */
         .crud-toolbar {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            gap: 10px;
-            margin-bottom: 12px;
+            gap: 12px;
+            margin-bottom: 14px;
             flex-wrap: wrap;
         }
 
@@ -207,6 +209,30 @@
             display: flex;
             gap: 8px;
             align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .search-box {
+            position: relative;
+            min-width: 260px;
+            flex-grow: 1;
+            max-width: 380px;
+        }
+
+        .search-box input {
+            margin-bottom: 0;
+            padding: 7px 12px 7px 32px;
+            font-size: 0.85rem;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            pointer-events: none;
         }
 
         .breadcrumbs {
@@ -218,13 +244,40 @@
             border-radius: 6px;
             font-size: 0.85rem;
             color: var(--text-secondary);
-            flex-grow: 1;
+            margin-bottom: 12px;
         }
 
         .breadcrumbs span {
             cursor: pointer;
             color: var(--accent);
             font-weight: 500;
+        }
+
+        /* Zona Drag & Drop */
+        .dropzone-overlay {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(14, 165, 233, 0.12);
+            border: 2px dashed var(--accent);
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 50;
+            pointer-events: none;
+            backdrop-filter: blur(2px);
+        }
+
+        .dropzone-content {
+            background: #0f172a;
+            border: 1px solid var(--accent);
+            padding: 18px 28px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: 600;
+            color: var(--accent);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
         }
 
         /* Tabla de Archivos */
@@ -270,6 +323,33 @@
             display: flex;
             gap: 6px;
             justify-content: flex-end;
+        }
+
+        /* Paginación */
+        .pagination-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 14px;
+            margin-top: 10px;
+            border-top: 1px solid var(--border);
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .pagination-controls {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .pagination-controls select {
+            width: auto;
+            margin-bottom: 0;
+            padding: 4px 8px;
+            font-size: 0.82rem;
         }
 
         /* Tabla de Auditoría */
@@ -350,9 +430,15 @@
             border: 1px solid var(--border);
             border-radius: 8px;
             width: 90%;
-            max-width: 650px;
+            max-width: 700px;
             padding: 22px;
             box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+            max-height: 85vh;
+            overflow-y: auto;
+        }
+
+        .modal-content-lg {
+            max-width: 980px;
         }
 
         .modal-header {
@@ -395,11 +481,15 @@
         <!-- Encabezado Principal -->
         <header>
             <div class="logo-area">
-                <h1>🗄️ S3 Explorer IDP <span class="tag">JIT Platform</span></h1>
-                <p style="color: var(--text-secondary); font-size: 0.85rem;">Just-In-Time Ephemeral Sessions & Audit Platform</p>
-            </div>
-            <div id="headerActions">
-                <!-- Se poblará dinámicamente si hay sesión o no -->
+                <h1>
+                    <span style="color: #ff9900; font-weight: 800; letter-spacing: -0.5px;">aws</span>
+                    <span style="color: var(--accent);">S3 Explorer IDP</span>
+                    <span class="tag" style="background: rgba(255, 153, 0, 0.15); color: #ff9900; border: 1px solid rgba(255, 153, 0, 0.4);">Amazon S3</span>
+                    <span class="tag">JIT Platform</span>
+                </h1>
+                <p style="color: var(--text-secondary); font-size: 0.85rem;">
+                    Just-In-Time Developer Portal for Amazon S3 Buckets
+                </p>
             </div>
         </header>
 
@@ -419,6 +509,7 @@
                 <input type="text" id="magicLinkInput" placeholder="http://.../?session=xxx  o hash UUID" />
                 <button id="btnOpenSession" style="width: 100%; margin-bottom: 20px;">🚀 Ingresar al Explorador</button>
 
+                <!-- Sección de Aprovisionamiento Dummy (Habilitada por ENABLE_SANDBOX=true) -->
                 <div id="dummySection" style="border-top: 1px solid var(--border); padding-top: 18px; text-align: left; display: none;">
                     <details>
                         <summary style="cursor: pointer; color: var(--accent); font-size: 0.88rem; font-weight: 500;">
@@ -434,6 +525,9 @@
                             <label for="dummyUser">Usuario solicitante:</label>
                             <input type="text" id="dummyUser" value="dfeversani" />
 
+                            <label for="dummyAccount">Cuenta AWS (Sandbox):</label>
+                            <input type="text" id="dummyAccount" placeholder="Cargando cuenta sandbox..." />
+
                             <button id="btnCreateDummy" class="btn-success" style="width: 100%; margin-top: 6px;">
                                 ⚡ Generar Sesión Efímera e Ingresar
                             </button>
@@ -444,7 +538,7 @@
         </div>
 
         <!-- =================================================================== -->
-        <!-- 2. VISTA DE SESIÓN ACTIVA (Solo Explorador de Archivos y Auditoría)   -->
+        <!-- 2. VISTA DE SESIÓN ACTIVA (Explorador CRUD con Drag & Drop)           -->
         <!-- =================================================================== -->
         <div id="sessionView" style="display: none;">
             <!-- Banner de Sesión -->
@@ -463,9 +557,12 @@
                         <strong>Tiempo Restante:</strong> <span class="timer-badge" id="sessTimer">--:--</span>
                     </div>
                 </div>
-                <div style="display: flex; gap: 8px;">
-                    <button class="btn-secondary btn-sm" id="btnTestForbidden" title="Verificar frontera de seguridad">
-                        🧪 Test 403
+                <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                    <button class="btn-secondary btn-sm" onclick="openAuditModal()" title="Ver registros de actividad de esta sesión">
+                        📋 Trazabilidad de la Sesión
+                    </button>
+                    <button class="btn-secondary btn-sm" id="btnTestForbidden" title="Verificar que AWS STS bloquea accesos no autorizados con 403 Forbidden">
+                        🧪 Test 403 (Seguridad)
                     </button>
                     <button class="btn-danger btn-sm" onclick="closeSession()">
                         ✕ Salir
@@ -473,17 +570,37 @@
                 </div>
             </div>
 
-            <!-- Explorador de Archivos con Botones de Operación CRUD -->
-            <div class="card">
+            <!-- Explorador de Archivos con Drag & Drop y Búsqueda -->
+            <div class="card" id="dropCard">
+                <!-- Dropzone Overlay activo al arrastrar -->
+                <div id="dropOverlay" class="dropzone-overlay" style="display: none;">
+                    <div class="dropzone-content">
+                        📂 Soltá tus archivos aquí para subirlos a S3 en esta carpeta
+                    </div>
+                </div>
+
                 <h2>
                     <span>Explorador de Archivos</span>
+                    <span style="font-size: 0.8rem; font-weight: normal; color: var(--text-secondary);">
+                        💡 Podés arrastrar y soltar archivos desde tu PC directamente aquí
+                    </span>
                 </h2>
 
+                <div class="breadcrumbs" id="breadcrumbs">
+                    <span onclick="navigateTo('')">root</span>
+                </div>
+
                 <div class="crud-toolbar">
-                    <div class="breadcrumbs" id="breadcrumbs">
-                        <span onclick="navigateTo('')">root</span>
+                    <div class="search-box">
+                        <span class="search-icon">🔍</span>
+                        <input type="text" id="searchInput" placeholder="Buscar archivo o carpeta..." oninput="handleSearch()" />
                     </div>
+
                     <div class="crud-actions">
+                        <input type="file" id="filePickerInput" multiple style="display: none;" onchange="handleFilePickerUpload(event)" />
+                        <button class="btn-secondary btn-sm" onclick="document.getElementById('filePickerInput').click()">
+                            📤 Subir desde PC
+                        </button>
                         <button class="btn-success btn-sm" onclick="openCreateModal()">
                             ➕ Nuevo Archivo
                         </button>
@@ -499,14 +616,58 @@
                 <div id="fileTableContainer">
                     <!-- Se renderizará la tabla de archivos -->
                 </div>
+
+                <!-- Barra de Paginación del Explorador -->
+                <div class="pagination-bar" id="filePaginationBar" style="display: none;">
+                    <div id="filePageInfo">Mostrando 0-0 de 0</div>
+                    <div class="pagination-controls">
+                        <span>Items por página:</span>
+                        <select id="filePerPageSelect" onchange="changeFilePerPage(this.value)">
+                            <option value="10" selected>10</option>
+                            <option value="25">25</option>
+                            <option value="50">50</option>
+                        </select>
+                        <button class="btn-secondary btn-sm" id="btnFilePrev" onclick="changeFilePage(-1)">⬅️ Anterior</button>
+                        <span id="filePageCurrent" style="font-weight: 600; color: var(--text-primary); margin: 0 4px;">1</span>
+                        <button class="btn-secondary btn-sm" id="btnFileNext" onclick="changeFilePage(1)">Siguiente ➡️</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- =================================================================== -->
+    <!-- MODAL DE AUDITORÍA DE LA SESIÓN                                      -->
+    <!-- =================================================================== -->
+    <div class="modal-overlay" id="auditModal" style="display: none;">
+        <div class="modal-content modal-content-lg">
+            <div class="modal-header">
+                <h3>📋 Trazabilidad de la Sesión Actual</h3>
+                <button class="modal-close" onclick="closeModal('auditModal')">✕</button>
             </div>
 
-            <!-- Tabla de Auditoría -->
-            <div class="card">
-                <h2>
-                    <span>Auditoría en Tiempo Real (DynamoDB)</span>
-                    <button class="btn-secondary btn-sm" onclick="loadAudits()">↻ Refrescar Logs</button>
-                </h2>
+            <div style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 12px; display: flex; gap: 16px; flex-wrap: wrap;">
+                <div><strong>Sesión:</strong> <code id="auditSessionHash" style="color: var(--accent);"></code></div>
+                <div><strong>Bucket:</strong> <span id="auditBucketName"></span></div>
+                <div><small style="color: var(--accent); font-weight: 500;">(Historial exclusivo de esta sesión — guardado permanentemente en DynamoDB)</small></div>
+            </div>
+
+            <div class="crud-toolbar" style="margin-bottom: 10px;">
+                <div class="search-box">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" id="auditSearchInput" placeholder="Filtrar por acción, key o usuario..." oninput="handleAuditSearch()" />
+                </div>
+                <div style="display: flex; gap: 8px; align-items: center;">
+                    <select id="auditStatusFilter" style="margin-bottom: 0; padding: 7px 10px; font-size: 0.85rem;" onchange="handleAuditSearch()">
+                        <option value="ALL" selected>Todos los estados</option>
+                        <option value="ALLOWED">Solo ALLOWED</option>
+                        <option value="DENIED">Solo DENIED</option>
+                    </select>
+                    <button class="btn-secondary btn-sm" onclick="loadSessionAudits()">↻ Refrescar</button>
+                </div>
+            </div>
+
+            <div style="overflow-x: auto;">
                 <table class="audit-table">
                     <thead>
                         <tr>
@@ -518,12 +679,26 @@
                             <th>Estado</th>
                         </tr>
                     </thead>
-                    <tbody id="auditTableBody">
+                    <tbody id="auditModalTableBody">
                         <tr>
                             <td colspan="6" style="color: var(--text-secondary); text-align: center;">Sin registros aún.</td>
                         </tr>
                     </tbody>
                 </table>
+            </div>
+
+            <!-- Paginación de Auditoría -->
+            <div class="pagination-bar" id="auditPaginationBar" style="display: none;">
+                <div id="auditPageInfo">Mostrando 0-0 de 0</div>
+                <div class="pagination-controls">
+                    <button class="btn-secondary btn-sm" id="btnAuditPrev" onclick="changeAuditPage(-1)">⬅️ Anterior</button>
+                    <span id="auditPageCurrent" style="font-weight: 600; color: var(--text-primary); margin: 0 4px;">1</span>
+                    <button class="btn-secondary btn-sm" id="btnAuditNext" onclick="changeAuditPage(1)">Siguiente ➡️</button>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeModal('auditModal')">Cerrar</button>
             </div>
         </div>
     </div>
@@ -532,11 +707,11 @@
     <!-- MODALES DE OPERACIÓN CRUD                                            -->
     <!-- =================================================================== -->
 
-    <!-- Modal Crear / Subir Archivo -->
+    <!-- Modal Crear Archivo -->
     <div class="modal-overlay" id="createModal" style="display: none;">
         <div class="modal-content">
             <div class="modal-header">
-                <h3>➕ Crear / Subir Archivo</h3>
+                <h3>➕ Crear / Escribir Archivo</h3>
                 <button class="modal-close" onclick="closeModal('createModal')">✕</button>
             </div>
             <label for="createFileName">Nombre del Archivo (en la carpeta actual):</label>
@@ -584,7 +759,7 @@
 
             <div class="modal-footer">
                 <button class="btn-secondary" onclick="closeModal('editModal')">Cancelar</button>
-                <button class="btn-success" onclick="submitEditFile()">Guardar Cambios</button>
+                <button class="btn-success" onclick="submitEditFile()">Guardar Cambios en S3</button>
             </div>
         </div>
     </div>
@@ -599,6 +774,7 @@
             <textarea id="viewFileContent" rows="12" readonly style="font-family: monospace; font-size: 0.85rem;"></textarea>
 
             <div class="modal-footer">
+                <button class="btn-secondary" id="btnDownloadFromView">📥 Descargar a PC</button>
                 <button class="btn-secondary" onclick="closeModal('viewModal')">Cerrar</button>
             </div>
         </div>
@@ -609,6 +785,19 @@
         let currentPrefix = "";
         let timerInterval = null;
         let defaultBucket = "";
+
+        // Estado del Explorador de Archivos
+        let allDirectories = [];
+        let allFiles = [];
+        let filteredFiles = [];
+        let currentFilePage = 1;
+        let filePerPage = 10;
+
+        // Estado de la Auditoría
+        let sessionAuditLogs = [];
+        let filteredAuditLogs = [];
+        let currentAuditPage = 1;
+        let auditPerPage = 10;
 
         const homeView = document.getElementById("homeView");
         const sessionView = document.getElementById("sessionView");
@@ -627,7 +816,10 @@
         const sessAccount = document.getElementById("sessAccount");
         const sessTimer = document.getElementById("sessTimer");
         const fileTableContainer = document.getElementById("fileTableContainer");
-        const auditTableBody = document.getElementById("auditTableBody");
+        const searchInput = document.getElementById("searchInput");
+
+        const dropCard = document.getElementById("dropCard");
+        const dropOverlay = document.getElementById("dropOverlay");
 
         function showAlert(msg, type = "success") {
             alertBox.innerHTML = `<div class="notice notice-${type}">${msg}</div>`;
@@ -635,11 +827,17 @@
         }
 
         async function initApp() {
+            setupDragAndDrop();
+
             try {
                 const res = await fetch("/api/info");
                 const data = await res.json();
                 defaultBucket = data.default_bucket || "";
                 if (data.default_bucket) dummyBucket.value = data.default_bucket;
+                if (data.default_account_id) {
+                    const accInput = document.getElementById("dummyAccount");
+                    if (accInput) accInput.value = data.default_account_id;
+                }
                 if (data.enable_sandbox) {
                     const dummySec = document.getElementById("dummySection");
                     if (dummySec) dummySec.style.display = "block";
@@ -663,7 +861,6 @@
             if (timerInterval) clearInterval(timerInterval);
             sessionView.style.display = "none";
             homeView.style.display = "block";
-            // Limpiar parámetro de URL si existe
             if (window.location.search) {
                 window.history.replaceState({}, document.title, window.location.pathname);
             }
@@ -686,7 +883,6 @@
                 currentSession = data;
                 renderSessionView();
                 navigateTo("");
-                loadAudits();
                 showAlert(`✅ Acceso concedido al bucket <strong>${data.target_bucket}</strong>`, "success");
             } catch (err) {
                 showHomeView();
@@ -750,6 +946,7 @@
             const bucket = dummyBucket.value.trim();
             const email = dummyEmail.value.trim();
             const user = dummyUser.value.trim();
+            const accountId = (document.getElementById("dummyAccount")?.value || "").trim();
 
             if (!bucket) {
                 showAlert("Ingresá un nombre de bucket.", "error");
@@ -767,13 +964,13 @@
                         bucket_name: bucket,
                         email: email,
                         username: user,
+                        aws_account_id: accountId,
                         duration_minutes: 15
                     })
                 });
                 const data = await res.json();
                 if (!res.ok) throw new Error(data.message || data.error);
 
-                // Cargar sesión
                 await loadSession(data.session_id);
             } catch (err) {
                 showAlert(err.message, "error");
@@ -783,13 +980,18 @@
             }
         });
 
-        // Navegación de Archivos
+        // =====================================================================
+        // NAVEGACIÓN, BÚSQUEDA Y PAGINACIÓN DE ARCHIVOS
+        // =====================================================================
+
         async function navigateTo(prefix) {
             currentPrefix = prefix;
+            searchInput.value = "";
+            currentFilePage = 1;
             updateBreadcrumbs();
 
             if (!currentSession) return;
-            fileTableContainer.innerHTML = "<p style='color: var(--text-secondary); padding: 12px;'>Listando objetos...</p>";
+            fileTableContainer.innerHTML = "<p style='color: var(--text-secondary); padding: 16px;'>Listando objetos...</p>";
 
             try {
                 const url = `/api/objects?prefix=${encodeURIComponent(prefix)}&session_id=${encodeURIComponent(currentSession.session_id)}`;
@@ -799,11 +1001,11 @@
                 const data = await res.json();
                 if (!res.ok) throw new Error(data.message || data.error);
 
-                renderFileTable(data);
-                loadAudits();
+                allDirectories = data.subdirectories || [];
+                allFiles = (data.objects || []).filter(o => !o.key.endsWith("/"));
+                applyFileFilter();
             } catch (err) {
                 fileTableContainer.innerHTML = `<div class='notice notice-error'>Error al listar: ${err.message}</div>`;
-                loadAudits();
             }
         }
 
@@ -825,14 +1027,64 @@
             bc.innerHTML = html;
         }
 
-        function renderFileTable(data) {
-            const dirs = data.subdirectories || [];
-            const files = data.objects || [];
+        function handleSearch() {
+            currentFilePage = 1;
+            applyFileFilter();
+        }
+
+        function applyFileFilter() {
+            const term = searchInput.value.trim().toLowerCase();
+
+            let matchedDirs = allDirectories;
+            let matchedFiles = allFiles;
+
+            if (term) {
+                matchedDirs = allDirectories.filter(d => d.toLowerCase().includes(term));
+                matchedFiles = allFiles.filter(f => f.key.toLowerCase().includes(term));
+            }
+
+            filteredFiles = matchedFiles;
+            renderFileTable(matchedDirs, matchedFiles);
+        }
+
+        function changeFilePerPage(val) {
+            filePerPage = parseInt(val, 10);
+            currentFilePage = 1;
+            applyFileFilter();
+        }
+
+        function changeFilePage(delta) {
+            currentFilePage += delta;
+            applyFileFilter();
+        }
+
+        function renderFileTable(dirs, files) {
+            const totalFiles = files.length;
+            const totalPages = Math.max(1, Math.ceil(totalFiles / filePerPage));
+
+            if (currentFilePage > totalPages) currentFilePage = totalPages;
+            if (currentFilePage < 1) currentFilePage = 1;
+
+            const startIndex = (currentFilePage - 1) * filePerPage;
+            const endIndex = startIndex + filePerPage;
+            const pageFiles = files.slice(startIndex, endIndex);
+
+            // Control de paginador
+            const paginationBar = document.getElementById("filePaginationBar");
+            if (totalFiles > 0) {
+                paginationBar.style.display = "flex";
+                document.getElementById("filePageInfo").innerText = `Mostrando ${startIndex + 1} - ${Math.min(endIndex, totalFiles)} de ${totalFiles} archivo(s)`;
+                document.getElementById("filePageCurrent").innerText = `Pág ${currentFilePage} de ${totalPages}`;
+                document.getElementById("btnFilePrev").disabled = (currentFilePage === 1);
+                document.getElementById("btnFileNext").disabled = (currentFilePage === totalPages);
+            } else {
+                paginationBar.style.display = "none";
+            }
 
             if (dirs.length === 0 && files.length === 0) {
                 fileTableContainer.innerHTML = `
-                    <div style="padding: 24px; text-align: center; color: var(--text-secondary);">
-                        El directorio actual está vacío. ¡Podés crear un archivo usando <strong>Nuevo Archivo</strong> arriba!
+                    <div style="padding: 32px; text-align: center; color: var(--text-secondary);">
+                        ${searchInput.value ? 'No se encontraron archivos que coincidan con la búsqueda.' : 'El directorio actual está vacío. Podés crear un archivo usando el botón de arriba o arrastrando archivos desde tu PC.'}
                     </div>
                 `;
                 return;
@@ -845,37 +1097,38 @@
                             <th>Nombre</th>
                             <th>Tamaño</th>
                             <th>Última Modificación</th>
-                            <th style="text-align: right;">Acciones (CRUD)</th>
+                            <th style="text-align: right;">Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
             `;
 
-            for (const dir of dirs) {
-                const name = dir.replace(data.prefix, "");
-                html += `
-                    <tr>
-                        <td>
-                            <div class="file-name-cell" onclick="navigateTo('${dir}')">
-                                📁 ${name}
-                            </div>
-                        </td>
-                        <td>-</td>
-                        <td>-</td>
-                        <td style="text-align: right;">
-                            <button class="btn-secondary btn-sm" onclick="navigateTo('${dir}')">Abrir</button>
-                        </td>
-                    </tr>
-                `;
+            // Renderizar carpetas (siempre en la primera página o si coincide la búsqueda)
+            if (currentFilePage === 1 || dirs.length > 0) {
+                for (const dir of dirs) {
+                    const name = dir.replace(currentPrefix, "");
+                    html += `
+                        <tr>
+                            <td>
+                                <div class="file-name-cell" onclick="navigateTo('${dir}')">
+                                    📁 ${name}
+                                </div>
+                            </td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td style="text-align: right;">
+                                <button class="btn-secondary btn-sm" onclick="navigateTo('${dir}')">Abrir</button>
+                            </td>
+                        </tr>
+                    `;
+                }
             }
 
-            for (const obj of files) {
-                // Si el objeto termina en "/" es una carpeta marcador
-                if (obj.key.endsWith("/")) continue;
-
-                const name = obj.key.replace(data.prefix, "");
+            for (const obj of pageFiles) {
+                const name = obj.key.replace(currentPrefix, "");
                 const sizeKb = (obj.size / 1024).toFixed(1);
                 const modified = new Date(obj.last_modified).toLocaleString();
+                const downloadUrl = `/api/objects/content?key=${encodeURIComponent(obj.key)}&download=true&session_id=${encodeURIComponent(currentSession.session_id)}`;
 
                 html += `
                     <tr>
@@ -887,9 +1140,10 @@
                         <td>${sizeKb} KB</td>
                         <td>${modified}</td>
                         <td class="row-actions">
-                            <button class="btn-secondary btn-sm" onclick="viewFile('${obj.key}')" title="Ver contenido (Read)">👁️ Ver</button>
-                            <button class="btn-secondary btn-sm" onclick="openEditModal('${obj.key}')" title="Editar contenido (Update)">✏️ Editar</button>
-                            <button class="btn-danger btn-sm" onclick="deleteFile('${obj.key}')" title="Eliminar archivo (Delete)">🗑️ Eliminar</button>
+                            <button class="btn-secondary btn-sm" onclick="viewFile('${obj.key}')" title="Ver contenido">👁️ Ver</button>
+                            <a href="${downloadUrl}" class="btn-secondary btn-sm" style="text-decoration: none;" title="Descargar a PC" download>📥 Descargar</a>
+                            <button class="btn-secondary btn-sm" onclick="openEditModal('${obj.key}')" title="Editar contenido">✏️ Editar</button>
+                            <button class="btn-danger btn-sm" onclick="deleteFile('${obj.key}')" title="Eliminar archivo">🗑️ Eliminar</button>
                         </td>
                     </tr>
                 `;
@@ -900,10 +1154,200 @@
         }
 
         // =====================================================================
-        // OPERACIONES CRUD
+        // DRAG AND DROP & SUBIDA DE ARCHIVOS DESDE PC
         // =====================================================================
 
-        // CREATE: Archivo
+        function setupDragAndDrop() {
+            let dragCounter = 0;
+
+            window.addEventListener("dragenter", (e) => {
+                e.preventDefault();
+                if (!currentSession) return;
+                dragCounter++;
+                dropOverlay.style.display = "flex";
+            });
+
+            window.addEventListener("dragleave", (e) => {
+                e.preventDefault();
+                if (!currentSession) return;
+                dragCounter--;
+                if (dragCounter <= 0) {
+                    dragCounter = 0;
+                    dropOverlay.style.display = "none";
+                }
+            });
+
+            window.addEventListener("dragover", (e) => {
+                e.preventDefault();
+            });
+
+            window.addEventListener("drop", async (e) => {
+                e.preventDefault();
+                dragCounter = 0;
+                dropOverlay.style.display = "none";
+                if (!currentSession) return;
+
+                const files = e.dataTransfer.files;
+                if (files && files.length > 0) {
+                    await uploadMultipleFiles(files);
+                }
+            });
+        }
+
+        async function handleFilePickerUpload(event) {
+            const files = event.target.files;
+            if (files && files.length > 0) {
+                await uploadMultipleFiles(files);
+            }
+            event.target.value = "";
+        }
+
+        async function uploadMultipleFiles(files) {
+            showAlert(`Subiendo ${files.length} archivo(s) a S3...`, "info");
+            let successCount = 0;
+
+            for (const file of files) {
+                try {
+                    const fullKey = (currentPrefix + file.name).replace(/^\/+/, "");
+                    const base64Data = await readFileAsBase64(file);
+
+                    const res = await fetch("/api/objects/upload", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "X-Session-ID": currentSession.session_id
+                        },
+                        body: JSON.stringify({
+                            key: fullKey,
+                            content: base64Data,
+                            is_base64: true
+                        })
+                    });
+
+                    const data = await res.json();
+                    if (!res.ok) throw new Error(data.message || data.error);
+                    successCount++;
+                } catch (err) {
+                    showAlert(`Error subiendo '${file.name}': ${err.message}`, "error");
+                }
+            }
+
+            if (successCount > 0) {
+                showAlert(`✅ Se subieron ${successCount} archivo(s) exitosamente a S3.`, "success");
+                refreshFiles();
+            }
+        }
+
+        function readFileAsBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => {
+                    // Remover header de DataURL (ej: "data:image/png;base64,")
+                    const result = reader.result;
+                    const base64 = result.includes(",") ? result.split(",")[1] : result;
+                    resolve(base64);
+                };
+                reader.onerror = (e) => reject(e);
+                reader.readAsDataURL(file);
+            });
+        }
+
+        // =====================================================================
+        // AUDITORÍA DE LA SESIÓN Y MODAL DEDICADO
+        // =====================================================================
+
+        function openAuditModal() {
+            if (!currentSession) return;
+            document.getElementById("auditSessionHash").innerText = currentSession.session_id;
+            document.getElementById("auditBucketName").innerText = currentSession.target_bucket;
+            document.getElementById("auditSearchInput").value = "";
+            document.getElementById("auditStatusFilter").value = "ALL";
+            document.getElementById("auditModal").style.display = "flex";
+            loadSessionAudits();
+        }
+
+        async function loadSessionAudits() {
+            if (!currentSession) return;
+            try {
+                const res = await fetch(`/api/audits?session_id=${encodeURIComponent(currentSession.session_id)}`, {
+                    headers: { "X-Session-ID": currentSession.session_id }
+                });
+                const data = await res.json();
+                sessionAuditLogs = data.items || [];
+                handleAuditSearch();
+            } catch (err) {
+                console.error("Error cargando auditoría de sesión:", err);
+            }
+        }
+
+        function handleAuditSearch() {
+            const term = document.getElementById("auditSearchInput").value.trim().toLowerCase();
+            const statusFilter = document.getElementById("auditStatusFilter").value;
+
+            filteredAuditLogs = sessionAuditLogs.filter(item => {
+                const matchesTerm = !term ||
+                    (item.action && item.action.toLowerCase().includes(term)) ||
+                    (item.key && item.key.toLowerCase().includes(term)) ||
+                    (item.username && item.username.toLowerCase().includes(term));
+
+                const matchesStatus = (statusFilter === "ALL") || (item.status === statusFilter);
+
+                return matchesTerm && matchesStatus;
+            });
+
+            currentAuditPage = 1;
+            renderAuditModalTable();
+        }
+
+        function changeAuditPage(delta) {
+            currentAuditPage += delta;
+            renderAuditModalTable();
+        }
+
+        function renderAuditModalTable() {
+            const tbody = document.getElementById("auditModalTableBody");
+            const total = filteredAuditLogs.length;
+            const totalPages = Math.max(1, Math.ceil(total / auditPerPage));
+
+            if (currentAuditPage > totalPages) currentAuditPage = totalPages;
+            if (currentAuditPage < 1) currentAuditPage = 1;
+
+            const startIndex = (currentAuditPage - 1) * auditPerPage;
+            const endIndex = startIndex + auditPerPage;
+            const pageItems = filteredAuditLogs.slice(startIndex, endIndex);
+
+            const paginationBar = document.getElementById("auditPaginationBar");
+            if (total > 0) {
+                paginationBar.style.display = "flex";
+                document.getElementById("auditPageInfo").innerText = `Mostrando ${startIndex + 1} - ${Math.min(endIndex, total)} de ${total} registro(s)`;
+                document.getElementById("auditPageCurrent").innerText = `Pág ${currentAuditPage} de ${totalPages}`;
+                document.getElementById("btnAuditPrev").disabled = (currentAuditPage === 1);
+                document.getElementById("btnAuditNext").disabled = (currentAuditPage === totalPages);
+            } else {
+                paginationBar.style.display = "none";
+            }
+
+            if (pageItems.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: var(--text-secondary); padding: 18px;">Sin registros que coincidan.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = pageItems.map(item => `
+                <tr>
+                    <td>${new Date(item.timestamp * 1000).toLocaleTimeString()}</td>
+                    <td><strong>${item.username || 'dev'}</strong><br><small style="color:var(--text-secondary)">${item.email || ''}</small></td>
+                    <td><code>${item.aws_account_id || 'Local'}</code></td>
+                    <td><code>${item.action}</code></td>
+                    <td>${item.bucket} ${item.key ? ' / ' + item.key : ''}</td>
+                    <td><span class="status-pill status-${item.status}">${item.status}</span></td>
+                </tr>
+            `).join("");
+        }
+
+        // =====================================================================
+        // CRUD: CREAR, EDITAR, VER Y ELIMINAR ARCHIVOS
+        // =====================================================================
+
         function openCreateModal() {
             document.getElementById("createFileName").value = "";
             document.getElementById("createFileContent").value = "";
@@ -939,11 +1383,9 @@
                 refreshFiles();
             } catch (err) {
                 showAlert("Error al crear archivo: " + err.message, "error");
-                loadAudits();
             }
         }
 
-        // CREATE: Carpeta
         function openFolderModal() {
             document.getElementById("folderNameInput").value = "";
             document.getElementById("folderModal").style.display = "flex";
@@ -976,11 +1418,9 @@
                 refreshFiles();
             } catch (err) {
                 showAlert("Error al crear carpeta: " + err.message, "error");
-                loadAudits();
             }
         }
 
-        // READ: Ver
         async function viewFile(key) {
             if (!currentSession) return;
             try {
@@ -994,15 +1434,15 @@
                 const text = await res.text();
                 document.getElementById("viewFileName").innerText = key;
                 document.getElementById("viewFileContent").value = text;
+                document.getElementById("btnDownloadFromView").onclick = () => {
+                    window.location.href = `/api/objects/content?key=${encodeURIComponent(key)}&download=true&session_id=${encodeURIComponent(currentSession.session_id)}`;
+                };
                 document.getElementById("viewModal").style.display = "flex";
-                loadAudits();
             } catch (e) {
                 showAlert("Error al leer archivo: " + e.message, "error");
-                loadAudits();
             }
         }
 
-        // UPDATE: Editar
         async function openEditModal(key) {
             if (!currentSession) return;
             try {
@@ -1045,11 +1485,9 @@
                 refreshFiles();
             } catch (err) {
                 showAlert("Error al actualizar: " + err.message, "error");
-                loadAudits();
             }
         }
 
-        // DELETE: Eliminar
         async function deleteFile(key) {
             if (!currentSession) return;
             if (!confirm(`¿Estás seguro de que deseás eliminar '${key}' de S3?\nEsta acción quedará registrada en la auditoría.`)) {
@@ -1073,34 +1511,11 @@
                 refreshFiles();
             } catch (err) {
                 showAlert("Error al eliminar: " + err.message, "error");
-                loadAudits();
             }
         }
 
         function closeModal(id) {
             document.getElementById(id).style.display = "none";
-        }
-
-        // Auditoría
-        async function loadAudits() {
-            try {
-                const res = await fetch("/api/audits");
-                const data = await res.json();
-                if (data.items && data.items.length > 0) {
-                    auditTableBody.innerHTML = data.items.map(item => `
-                        <tr>
-                            <td>${new Date(item.timestamp * 1000).toLocaleTimeString()}</td>
-                            <td><strong>${item.username || 'dev'}</strong><br><small style="color:var(--text-secondary)">${item.email || ''}</small></td>
-                            <td><code>${item.aws_account_id || 'Local'}</code></td>
-                            <td><code>${item.action}</code></td>
-                            <td>${item.bucket} ${item.key ? ' / ' + item.key : ''}</td>
-                            <td><span class="status-pill status-${item.status}">${item.status}</span></td>
-                        </tr>
-                    `).join("");
-                }
-            } catch (e) {
-                console.error(e);
-            }
         }
 
         // Test 403 Forbidden
@@ -1118,7 +1533,6 @@
                 } else {
                     showAlert("Respuesta inesperada: " + JSON.stringify(data), "error");
                 }
-                loadAudits();
             } catch (e) {
                 showAlert("Error en la prueba: " + e.message, "error");
             }
