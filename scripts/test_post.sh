@@ -169,7 +169,7 @@ BODY=$(echo "${RESPONSE}" | sed '/HTTP_STATUS/d')
 
 echo "📬 HTTP Status: ${HTTP_STATUS}"
 echo "📄 Respuesta:"
-if command -v jq &> /dev/null; then
+if command -v jq &> /dev/null && echo "${BODY}" | jq . >/dev/null 2>&1; then
   echo "${BODY}" | jq .
 else
   echo "${BODY}"

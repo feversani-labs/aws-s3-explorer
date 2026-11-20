@@ -327,6 +327,36 @@ class S3ExplorerHandler(BaseHTTPRequestHandler):
                     "message": e.response["Error"]["Message"]
                 })
 
+        # Operaciones CRUD sobre S3: Renombrar objeto
+        if path == "/api/objects/rename":
+            session_id = self.headers.get("X-Session-ID") or query.get("session_id")
+            session_data = get_active_session(session_id)
+            if not session_data:
+                return self._send_response(401, {"error": "Sesión inválida o expirada"})
+
+            data = self._read_body_json()
+            old_key = data.get("old_key", "").strip().lstrip("/")
+            new_key = data.get("new_key", "").strip().lstrip("/")
+            if not old_key or not new_key:
+                return self._send_response(400, {"error": "old_key y new_key son requeridos"})
+
+            try:
+                s3_service.rename_object(
+                    bucket=session_data["target_bucket"],
+                    old_key=old_key,
+                    new_key=new_key,
+                    credentials=session_data["credentials"],
+                    session_id=session_id,
+                    session_meta=session_data
+                )
+                return self._send_response(200, {"status": "success", "message": f"Archivo renombrado a '{new_key}' exitosamente"})
+            except ClientError as e:
+                code = e.response["Error"]["Code"]
+                return self._send_response(403 if code == "AccessDenied" else 500, {
+                    "error": code,
+                    "message": e.response["Error"]["Message"]
+                })
+
         # Prueba de acceso a bucket prohibido
         if path == "/api/test-forbidden":
             session_id = self.headers.get("X-Session-ID") or query.get("session_id")

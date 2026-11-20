@@ -34,17 +34,20 @@ echo "👤 Cuenta AWS          : ${ACCOUNT_ID}"
 echo "🛡️  Broker Role         : ${BROKER_ROLE_ARN}"
 echo "🗄️  DynamoDB Table      : ${DYNAMODB_TABLE}"
 echo ""
-echo "🚀 Enviando comando SSM para reiniciar el contenedor Docker con las variables..."
+echo "🚀 Enviando comando SSM para reiniciar el contenedor Docker en puerto 80..."
 
 COMMAND_ID=$(aws ssm send-command \
   --instance-ids "$INSTANCE_ID" \
   --document-name "AWS-RunShellScript" \
-  --comment "Restart s3-explorer with broker environment variables" \
+  --comment "Restart s3-explorer on port 80 with broker env vars" \
   --parameters 'commands=[
     "docker pull feversani/aws-s3-explorer:latest || true",
     "docker stop s3-explorer 2>/dev/null || true",
     "docker rm s3-explorer 2>/dev/null || true",
-    "docker run -d --restart always --name s3-explorer -p 80:8080 -e MODE=sandbox -e BROKER_ROLE_ARN=\"'"$BROKER_ROLE_ARN"'\" -e DYNAMODB_TABLE=\"'"$DYNAMODB_TABLE"'\" -e AWS_REGION=us-east-1 feversani/aws-s3-explorer:latest"
+    "docker run -d --restart always --name s3-explorer -p 80:8080 -e MODE=sandbox -e ENABLE_SANDBOX=true -e BROKER_ROLE_ARN='${BROKER_ROLE_ARN}' -e DYNAMODB_TABLE='${DYNAMODB_TABLE}' -e AWS_REGION=us-east-1 -e DEFAULT_ACCOUNT_ID='${ACCOUNT_ID}' feversani/aws-s3-explorer:latest",
+    "sleep 2",
+    "docker ps --filter name=s3-explorer",
+    "curl -s http://localhost:80/api/info || true"
   ]' \
   --query "Command.CommandId" \
   --output text)
@@ -52,16 +55,12 @@ COMMAND_ID=$(aws ssm send-command \
 echo "⏳ Esperando confirmación de AWS SSM (Command ID: ${COMMAND_ID})..."
 aws ssm wait command-executed --command-id "$COMMAND_ID" --instance-id "$INSTANCE_ID"
 
-STATUS=$(aws ssm get-command-invocation \
+echo ""
+echo "📄 Salida de EC2:"
+aws ssm get-command-invocation \
   --command-id "$COMMAND_ID" \
   --instance-id "$INSTANCE_ID" \
-  --query "Status" \
-  --output text)
+  --query "StandardOutputContent" \
+  --output text
 
-if [ "$STATUS" == "Success" ]; then
-  echo "🎉 ¡Contenedor reiniciado y configurado exitosamente en EC2!"
-  echo "👉 Ahora podés ejecutar de nuevo: make test-post"
-else
-  echo "⚠️ Estado del comando SSM: ${STATUS}"
-  aws ssm get-command-invocation --command-id "$COMMAND_ID" --instance-id "$INSTANCE_ID" --query "StandardOutputContent" --output text
-fi
+echo "✅ Contenedor reiniciado en EC2. Ahora el Load Balancer recibirá tráfico saludable."

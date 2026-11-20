@@ -134,6 +134,47 @@ class S3Service:
                 )
             raise e
 
+    def rename_object(self, bucket: str, old_key: str, new_key: str, credentials: dict,
+                      session_id: str = "", session_meta: dict = None):
+        meta = session_meta or {}
+        email = meta.get("email", "")
+        username = meta.get("username", "dev-user")
+        account_id = meta.get("aws_account_id", "")
+
+        s3 = self._get_client_with_creds(credentials)
+        action = "RenameObject"
+
+        try:
+            # En S3 el renombramiento se realiza mediante copy_object + delete_object
+            try:
+                copy_source = {"Bucket": bucket, "Key": old_key}
+                s3.copy_object(CopySource=copy_source, Bucket=bucket, Key=new_key)
+            except ClientError:
+                # Fallback: get_object + put_object
+                content = s3.get_object(Bucket=bucket, Key=old_key)["Body"].read()
+                s3.put_object(Bucket=bucket, Key=new_key, Body=content)
+
+            s3.delete_object(Bucket=bucket, Key=old_key)
+
+            if self.audit_service and session_id:
+                self.audit_service.record_audit_log(
+                    session_id=session_id, action=action, bucket=bucket, key=f"{old_key} -> {new_key}",
+                    email=email, username=username, aws_account_id=account_id,
+                    status="ALLOWED"
+                )
+
+            return {"status": "success", "old_key": old_key, "new_key": new_key}
+        except ClientError as e:
+            error_code = e.response["Error"]["Code"]
+            error_msg = e.response["Error"]["Message"]
+            if self.audit_service and session_id:
+                self.audit_service.record_audit_log(
+                    session_id=session_id, action=action, bucket=bucket, key=f"{old_key} -> {new_key}",
+                    email=email, username=username, aws_account_id=account_id,
+                    status="DENIED", error_message=f"{error_code}: {error_msg}"
+                )
+            raise e
+
     def delete_object(self, bucket: str, key: str, credentials: dict,
                       session_id: str = "", session_meta: dict = None):
         meta = session_meta or {}
@@ -161,6 +202,47 @@ class S3Service:
             if self.audit_service and session_id:
                 self.audit_service.record_audit_log(
                     session_id=session_id, action=action, bucket=bucket, key=key,
+                    email=email, username=username, aws_account_id=account_id,
+                    status="DENIED", error_message=f"{error_code}: {error_msg}"
+                )
+            raise e
+
+    def rename_object(self, bucket: str, old_key: str, new_key: str, credentials: dict,
+                      session_id: str = "", session_meta: dict = None):
+        meta = session_meta or {}
+        email = meta.get("email", "")
+        username = meta.get("username", "dev-user")
+        account_id = meta.get("aws_account_id", "")
+
+        s3 = self._get_client_with_creds(credentials)
+        action = "RenameObject"
+
+        try:
+            # En S3 el renombramiento se realiza mediante copy_object + delete_object
+            try:
+                copy_source = {"Bucket": bucket, "Key": old_key}
+                s3.copy_object(CopySource=copy_source, Bucket=bucket, Key=new_key)
+            except ClientError:
+                # Fallback: get_object + put_object
+                content = s3.get_object(Bucket=bucket, Key=old_key)["Body"].read()
+                s3.put_object(Bucket=bucket, Key=new_key, Body=content)
+
+            s3.delete_object(Bucket=bucket, Key=old_key)
+
+            if self.audit_service and session_id:
+                self.audit_service.record_audit_log(
+                    session_id=session_id, action=action, bucket=bucket, key=f"{old_key} -> {new_key}",
+                    email=email, username=username, aws_account_id=account_id,
+                    status="ALLOWED"
+                )
+
+            return {"status": "success", "old_key": old_key, "new_key": new_key}
+        except ClientError as e:
+            error_code = e.response["Error"]["Code"]
+            error_msg = e.response["Error"]["Message"]
+            if self.audit_service and session_id:
+                self.audit_service.record_audit_log(
+                    session_id=session_id, action=action, bucket=bucket, key=f"{old_key} -> {new_key}",
                     email=email, username=username, aws_account_id=account_id,
                     status="DENIED", error_message=f"{error_code}: {error_msg}"
                 )

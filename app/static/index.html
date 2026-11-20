@@ -481,10 +481,15 @@
         <!-- Encabezado Principal -->
         <header>
             <div class="logo-area">
-                <h1>
-                    <span style="color: #ff9900; font-weight: 800; letter-spacing: -0.5px;">aws</span>
-                    <span style="color: var(--accent);">S3 Explorer IDP</span>
-                    <span class="tag" style="background: rgba(255, 153, 0, 0.15); color: #ff9900; border: 1px solid rgba(255, 153, 0, 0.4);">Amazon S3</span>
+                <h1 style="display: flex; align-items: center; gap: 10px;">
+                    <svg width="34" height="34" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" style="flex-shrink: 0;" title="Amazon Simple Storage Service (S3)">
+                        <path d="M32 4C17.64 4 6 7.58 6 12v40c0 4.42 11.64 8 26 8s26-3.58 26-8V12c0-4.42-11.64-8-26-8z" fill="#E25A1C"/>
+                        <ellipse cx="32" cy="12" rx="26" ry="8" fill="#FF7733"/>
+                        <ellipse cx="32" cy="12" rx="20" ry="5.5" fill="#B33E0E"/>
+                        <path d="M12 25c5.2 2.6 13.1 4 20 4s14.8-1.4 20-4" stroke="#FFF" stroke-width="3" stroke-linecap="round" fill="none"/>
+                        <path d="M12 37c5.2 2.6 13.1 4 20 4s14.8-1.4 20-4" stroke="#FFF" stroke-width="3" stroke-linecap="round" fill="none"/>
+                    </svg>
+                    <span>S3 Explorer IDP</span>
                     <span class="tag">JIT Platform</span>
                 </h1>
                 <p style="color: var(--text-secondary); font-size: 0.85rem;">
@@ -744,22 +749,22 @@
         </div>
     </div>
 
-    <!-- Modal Editar Archivo -->
-    <div class="modal-overlay" id="editModal" style="display: none;">
-        <div class="modal-content">
+    <!-- Modal Renombrar Archivo -->
+    <div class="modal-overlay" id="renameModal" style="display: none;">
+        <div class="modal-content" style="max-width: 480px;">
             <div class="modal-header">
-                <h3>✏️ Editar Archivo</h3>
-                <button class="modal-close" onclick="closeModal('editModal')">✕</button>
+                <h3>✏️ Renombrar Archivo</h3>
+                <button class="modal-close" onclick="closeModal('renameModal')">✕</button>
             </div>
-            <label>Archivo:</label>
-            <input type="text" id="editFileName" disabled style="opacity: 0.8;" />
+            <label>Nombre actual:</label>
+            <input type="text" id="renameOldKey" disabled style="opacity: 0.7; font-family: monospace;" />
 
-            <label for="editFileContent">Contenido:</label>
-            <textarea id="editFileContent" rows="10"></textarea>
+            <label for="renameNewName">Nuevo nombre de archivo:</label>
+            <input type="text" id="renameNewName" placeholder="ej: nuevo-nombre.txt" />
 
             <div class="modal-footer">
-                <button class="btn-secondary" onclick="closeModal('editModal')">Cancelar</button>
-                <button class="btn-success" onclick="submitEditFile()">Guardar Cambios en S3</button>
+                <button class="btn-secondary" onclick="closeModal('renameModal')">Cancelar</button>
+                <button class="btn-success" onclick="submitRenameFile()">Renombrar en S3</button>
             </div>
         </div>
     </div>
@@ -1128,21 +1133,21 @@
                 const name = obj.key.replace(currentPrefix, "");
                 const sizeKb = (obj.size / 1024).toFixed(1);
                 const modified = new Date(obj.last_modified).toLocaleString();
-                const downloadUrl = `/api/objects/content?key=${encodeURIComponent(obj.key)}&download=true&session_id=${encodeURIComponent(currentSession.session_id)}`;
+                const isText = isTextFile(name);
 
                 html += `
                     <tr>
                         <td>
-                            <div class="file-name-cell" onclick="viewFile('${obj.key}')">
+                            <div class="file-name-cell" onclick="${isText ? `viewFile('${obj.key}')` : `downloadFile('${obj.key}')`}">
                                 📄 ${name}
                             </div>
                         </td>
                         <td>${sizeKb} KB</td>
                         <td>${modified}</td>
                         <td class="row-actions">
-                            <button class="btn-secondary btn-sm" onclick="viewFile('${obj.key}')" title="Ver contenido">👁️ Ver</button>
-                            <a href="${downloadUrl}" class="btn-secondary btn-sm" style="text-decoration: none;" title="Descargar a PC" download>📥 Descargar</a>
-                            <button class="btn-secondary btn-sm" onclick="openEditModal('${obj.key}')" title="Editar contenido">✏️ Editar</button>
+                            ${isText ? `<button class="btn-secondary btn-sm" onclick="viewFile('${obj.key}')" title="Ver contenido de texto">👁️ Ver</button>` : ''}
+                            <button class="btn-secondary btn-sm" onclick="downloadFile('${obj.key}')" title="Descargar archivo a tu PC">📥 Descargar</button>
+                            <button class="btn-secondary btn-sm" onclick="openRenameModal('${obj.key}')" title="Renombrar archivo">✏️ Renombrar</button>
                             <button class="btn-danger btn-sm" onclick="deleteFile('${obj.key}')" title="Eliminar archivo">🗑️ Eliminar</button>
                         </td>
                     </tr>
@@ -1443,48 +1448,76 @@
             }
         }
 
-        async function openEditModal(key) {
-            if (!currentSession) return;
-            try {
-                showAlert(`Cargando contenido de ${key}...`, "info");
-                const res = await fetch(`/api/objects/content?key=${encodeURIComponent(key)}`, {
-                    headers: { "X-Session-ID": currentSession.session_id }
-                });
-                if (!res.ok) {
-                    const err = await res.json();
-                    throw new Error(err.message || err.error);
-                }
-                const text = await res.text();
-                document.getElementById("editFileName").value = key;
-                document.getElementById("editFileContent").value = text;
-                document.getElementById("editModal").style.display = "flex";
-            } catch (e) {
-                showAlert("Error al cargar para edición: " + e.message, "error");
-            }
+        function isTextFile(filename) {
+            if (!filename) return false;
+            const ext = filename.split(".").pop().toLowerCase();
+            const textExtensions = [
+                "txt", "log", "json", "csv", "tsv", "md", "markdown", "yaml", "yml",
+                "xml", "html", "htm", "css", "js", "ts", "py", "sh", "bash", "sql",
+                "env", "ini", "conf", "config", "properties", "tf", "tfvars",
+                "dockerfile", "gitignore"
+            ];
+            return textExtensions.includes(ext) || !filename.includes(".");
         }
 
-        async function submitEditFile() {
-            const key = document.getElementById("editFileName").value;
-            const content = document.getElementById("editFileContent").value;
-            closeModal("editModal");
+        function downloadFile(key) {
+            if (!currentSession) return;
+            const url = `/api/objects/content?key=${encodeURIComponent(key)}&download=true&session_id=${encodeURIComponent(currentSession.session_id)}`;
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = key.split("/").pop() || "download";
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+
+        function openRenameModal(key) {
+            if (!currentSession) return;
+            document.getElementById("renameOldKey").value = key;
+            const parts = key.split("/");
+            const basename = parts.pop();
+            document.getElementById("renameNewName").value = basename;
+            document.getElementById("renameModal").style.display = "flex";
+        }
+
+        async function submitRenameFile() {
+            const oldKey = document.getElementById("renameOldKey").value;
+            const newName = document.getElementById("renameNewName").value.trim();
+
+            if (!newName) {
+                alert("Por favor ingresá un nuevo nombre.");
+                return;
+            }
+
+            const parts = oldKey.split("/");
+            parts.pop();
+            const prefix = parts.length > 0 ? parts.join("/") + "/" : "";
+            const newKey = prefix + newName;
+
+            if (oldKey === newKey) {
+                closeModal("renameModal");
+                return;
+            }
+
+            closeModal("renameModal");
 
             try {
-                showAlert(`Actualizando ${key} en S3...`, "info");
-                const res = await fetch("/api/objects/upload", {
+                showAlert(`Renombrando '${oldKey}' a '${newKey}'...`, "info");
+                const res = await fetch("/api/objects/rename", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
                         "X-Session-ID": currentSession.session_id
                     },
-                    body: JSON.stringify({ key: key, content: content })
+                    body: JSON.stringify({ old_key: oldKey, new_key: newKey })
                 });
                 const data = await res.json();
                 if (!res.ok) throw new Error(data.message || data.error);
 
-                showAlert(`✅ Archivo '${key}' actualizado exitosamente en S3`, "success");
+                showAlert(`✅ Archivo renombrado exitosamente a '${newName}'`, "success");
                 refreshFiles();
             } catch (err) {
-                showAlert("Error al actualizar: " + err.message, "error");
+                showAlert("Error al renombrar: " + err.message, "error");
             }
         }
 
