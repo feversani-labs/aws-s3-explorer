@@ -103,11 +103,14 @@ class S3ExplorerHandler(BaseHTTPRequestHandler):
 
         # 2. Información del entorno
         if path == "/api/info":
+            broker_arn = session_broker.broker_role_arn or os.environ.get("BROKER_ROLE_ARN", "")
             return self._send_response(200, {
                 "status": "ready",
                 "mode": os.environ.get("MODE", "sandbox"),
-                "broker_role_configured": bool(os.environ.get("BROKER_ROLE_ARN")),
-                "dynamodb_configured": bool(os.environ.get("DYNAMODB_TABLE")),
+                "broker_role_configured": bool(broker_arn),
+                "broker_role_arn": broker_arn,
+                "dynamodb_configured": bool(audit_service.table_name),
+                "dynamodb_table": audit_service.table_name,
                 "default_account_id": os.environ.get("DEFAULT_ACCOUNT_ID", ""),
                 "default_bucket": os.environ.get("DEFAULT_BUCKET", "")
             })

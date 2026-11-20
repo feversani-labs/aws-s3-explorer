@@ -129,3 +129,33 @@ El desarrollador abre el `magic_link` en cualquier navegador. La plataforma:
 * Muestra el email, usuario, cuenta de AWS y el contador regresivo de la sesión STS.
 * Permite explorar, descargar y subir archivos únicamente en el bucket autorizado.
 * Audita cada clic con trazabilidad total en DynamoDB.
+
+---
+
+## 5. Pruebas Locales y CLI
+
+### Configurar perfil AWS en la terminal actual:
+```bash
+source env.sh
+# Ahora podés ejecutar comandos directos de AWS CLI con el perfil ephemeral:
+aws s3 ls
+```
+O directamente con `make`:
+```bash
+make s3-ls
+make s3-ls BUCKET=s3://nombre-de-bucket
+```
+
+### Probar el POST con variables de entorno:
+```bash
+# Ejecutar con valores por defecto (o detección automática del ALB vía Terraform):
+make test-post
+
+# O pasando variables personalizadas:
+ALB_URL="http://mi-alb-dns.elb.amazonaws.com" \
+BUCKET="mi-bucket-personalizado" \
+USERNAME="dfeversani" \
+EMAIL="dev@empresa.com" \
+DURATION_MINUTES=30 \
+./scripts/test_post.sh
+```

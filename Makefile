@@ -6,10 +6,19 @@ TF_STATE_KEY ?= $(notdir $(CURDIR))/terraform.tfstate
 
 export AWS_PROFILE AWS_SHARED_CREDENTIALS_FILE AWS_REGION
 
-.PHONY: whoami init plan apply destroy docker-build docker-run
+.PHONY: whoami s3-ls test-post restart-container init plan apply destroy docker-build docker-run
 
 whoami:
 	aws sts get-caller-identity
+
+s3-ls:
+	aws s3 ls $(BUCKET)
+
+test-post:
+	@./scripts/test_post.sh
+
+restart-container:
+	@./scripts/restart_container.sh
 
 init:
 	@bucket="$$(aws ssm get-parameter --name "$(TF_STATE_PARAMETER)" --query 'Parameter.Value' --output text)" && \

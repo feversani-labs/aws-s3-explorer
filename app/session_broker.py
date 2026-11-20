@@ -14,9 +14,20 @@ from botocore.exceptions import ClientError
 
 class SessionBroker:
     def __init__(self, broker_role_arn=None, region="us-east-1"):
-        self.broker_role_arn = broker_role_arn or os.environ.get("BROKER_ROLE_ARN")
         self.region = region or os.environ.get("AWS_REGION", "us-east-1")
         self.sts_client = boto3.client("sts", region_name=self.region)
+        self.broker_role_arn = broker_role_arn or os.environ.get("BROKER_ROLE_ARN")
+
+        # Auto-descubrimiento de BROKER_ROLE_ARN si no vino por variable de entorno
+        if not self.broker_role_arn:
+            try:
+                account_id = self.sts_client.get_caller_identity().get("Account")
+                role_name = os.environ.get("BROKER_ROLE_NAME", "fvrsn-sandbox-s3-broker")
+                if account_id:
+                    self.broker_role_arn = f"arn:aws:iam::{account_id}:role/{role_name}"
+                    print(f"[SessionBroker] Auto-descubierto BROKER_ROLE_ARN: {self.broker_role_arn}")
+            except Exception as e:
+                print(f"[SessionBroker] No se pudo auto-descubrir BROKER_ROLE_ARN en init: {e}")
 
     def generate_session_policy(self, bucket_name: str) -> str:
         policy = {
@@ -57,7 +68,17 @@ class SessionBroker:
             target_role_arn = f"arn:aws:iam::{aws_account_id}:role/{role_name}"
 
         if not target_role_arn:
-            raise ValueError("BROKER_ROLE_ARN no está configurado.")
+            try:
+                account_id = self.sts_client.get_caller_identity().get("Account")
+                role_name = os.environ.get("BROKER_ROLE_NAME", "fvrsn-sandbox-s3-broker")
+                if account_id:
+                    target_role_arn = f"arn:aws:iam::{account_id}:role/{role_name}"
+                    self.broker_role_arn = target_role_arn
+            except Exception as e:
+                pass
+
+        if not target_role_arn:
+            raise ValueError("BROKER_ROLE_ARN no está configurado y falló el auto-descubrimiento.")
 
         token_hash = session_id or uuid.uuid4().hex
         session_name = f"s3-idp-{token_hash[:16]}"

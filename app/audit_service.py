@@ -11,8 +11,8 @@ from botocore.exceptions import ClientError
 
 class AuditService:
     def __init__(self, table_name=None, region="us-east-1"):
-        self.table_name = table_name or os.environ.get("DYNAMODB_TABLE")
         self.region = region or os.environ.get("AWS_REGION", "us-east-1")
+        self.table_name = table_name or os.environ.get("DYNAMODB_TABLE") or "fvrsn-sandbox-s3-explorer-idp"
         self.dynamodb = boto3.resource("dynamodb", region_name=self.region)
         self.table = self.dynamodb.Table(self.table_name) if self.table_name else None
 

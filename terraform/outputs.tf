@@ -22,3 +22,13 @@ output "dynamodb_table_name" {
   description = "Nombre de la tabla DynamoDB para auditoría y sesiones"
   value       = aws_dynamodb_table.idp_table.name
 }
+
+output "example_bucket_1" {
+  description = "Bucket de prueba example-1"
+  value       = aws_s3_bucket.example["example-1"].bucket
+}
+
+output "example_bucket_2" {
+  description = "Bucket de prueba example-2"
+  value       = aws_s3_bucket.example["example-2"].bucket
+}

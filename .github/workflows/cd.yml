@@ -58,7 +58,8 @@ jobs:
               "docker pull feversani/aws-s3-explorer:'"$IMAGE_TAG"'",
               "docker stop s3-explorer 2>/dev/null || true",
               "docker rm s3-explorer 2>/dev/null || true",
-              "docker run -d --restart always --name s3-explorer -p 80:8080 feversani/aws-s3-explorer:'"$IMAGE_TAG"'"
+              "ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text 2>/dev/null || echo \"\")",
+              "docker run -d --restart always --name s3-explorer -p 80:8080 -e MODE=sandbox -e BROKER_ROLE_ARN=\"arn:aws:iam::${ACCOUNT_ID}:role/fvrsn-sandbox-s3-broker\" -e DYNAMODB_TABLE=fvrsn-sandbox-s3-explorer-idp -e AWS_REGION=us-east-1 feversani/aws-s3-explorer:'"$IMAGE_TAG"'"
             ]' \
             --query "Command.CommandId" \
             --output text)
