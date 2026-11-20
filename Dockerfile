@@ -12,6 +12,7 @@ COPY app/ /app/
 EXPOSE 8080
 
 ENV PORT=8080 \
-    PYTHONUNBUFFERED=1
+    PYTHONUNBUFFERED=1 \
+    ENABLE_SANDBOX=true
 
 CMD ["python3", "/app/server.py"]

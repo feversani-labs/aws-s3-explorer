@@ -6,7 +6,14 @@ on:
       - main
     paths:
       - "terraform/**"
+      - "app/**"
+      - "Dockerfile"
+      - "requirements.txt"
   workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
 
 jobs:
   terraform:
@@ -23,6 +30,31 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Wait for CI if active for this commit
+        working-directory: .
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "==> Verificando si CI - Docker Build & Push fue disparado para este commit (${{ github.sha }})..."
+          
+          # Esperar brevemente (hasta 15s) para que el evento de CI se registre en GitHub Actions si fue un push simultáneo
+          RUN_ID=""
+          for i in {1..5}; do
+            RUN_ID=$(gh run list --workflow "CI - Docker Build & Push" --commit "${{ github.sha }}" --json databaseId,status --jq '.[0].databaseId' 2>/dev/null || true)
+            if [ -n "$RUN_ID" ] && [ "$RUN_ID" != "null" ]; then
+              break
+            fi
+            sleep 3
+          done
+
+          if [ -n "$RUN_ID" ] && [ "$RUN_ID" != "null" ]; then
+            echo "⏳ CI detectado (Run ID: $RUN_ID). Esperando que finalice exitosamente antes de ejecutar Terraform..."
+            gh run watch "$RUN_ID" --exit-status
+            echo "✅ CI completado con éxito. Procediendo con Terraform..."
+          else
+            echo "ℹ️  No se detectó ejecución de CI para este commit. Procediendo inmediatamente con Terraform."
+          fi
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3

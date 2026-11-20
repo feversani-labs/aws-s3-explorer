@@ -17,7 +17,6 @@
             --danger: #ef4444;
             --warning: #f59e0b;
             --border: #475569;
-            --purple: #a855f7;
         }
 
         * {
@@ -35,7 +34,7 @@
         }
 
         .container {
-            max-width: 1350px;
+            max-width: 1280px;
             margin: 0 auto;
         }
 
@@ -43,15 +42,15 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding-bottom: 20px;
+            padding-bottom: 18px;
             border-bottom: 1px solid var(--border);
             margin-bottom: 24px;
             flex-wrap: wrap;
-            gap: 16px;
+            gap: 14px;
         }
 
         .logo-area h1 {
-            font-size: 1.5rem;
+            font-size: 1.4rem;
             color: var(--accent);
             display: flex;
             align-items: center;
@@ -61,85 +60,24 @@
         .tag {
             background: #0369a1;
             color: #e0f2fe;
-            font-size: 0.75rem;
+            font-size: 0.72rem;
             padding: 2px 8px;
             border-radius: 9999px;
             text-transform: uppercase;
             font-weight: 700;
         }
 
-        .header-actions {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .badge-status {
-            padding: 5px 12px;
-            border-radius: 9999px;
-            font-size: 0.82rem;
-            font-weight: 600;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .badge-sandbox {
-            background: rgba(245, 158, 11, 0.15);
-            color: var(--warning);
-            border: 1px solid var(--warning);
-        }
-
-        .badge-prod {
-            background: rgba(34, 197, 94, 0.15);
-            color: var(--success);
-            border: 1px solid var(--success);
-        }
-
-        .btn-mode-toggle {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            color: var(--text-primary);
-            padding: 6px 14px;
-            border-radius: 6px;
-            font-size: 0.85rem;
-            cursor: pointer;
-            transition: all 0.2s;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            width: auto;
-            margin-bottom: 0;
-        }
-
-        .btn-mode-toggle:hover {
-            background: var(--border);
-            border-color: var(--accent);
-        }
-
-        .grid {
-            display: grid;
-            grid-template-columns: 420px 1fr;
-            gap: 24px;
-        }
-
-        @media (max-width: 960px) {
-            .grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
         .card {
             background: var(--bg-secondary);
             border: 1px solid var(--border);
             border-radius: 8px;
-            padding: 20px;
+            padding: 22px;
             margin-bottom: 20px;
         }
 
         .card h2 {
-            font-size: 1.1rem;
-            margin-bottom: 14px;
+            font-size: 1.15rem;
+            margin-bottom: 16px;
             color: var(--text-primary);
             display: flex;
             align-items: center;
@@ -148,12 +86,12 @@
 
         label {
             display: block;
-            font-size: 0.82rem;
+            font-size: 0.84rem;
             color: var(--text-secondary);
             margin-bottom: 4px;
         }
 
-        input, select, button, textarea {
+        input, select, textarea {
             width: 100%;
             padding: 9px 12px;
             border-radius: 6px;
@@ -165,25 +103,24 @@
         }
 
         button {
-            background: var(--accent);
-            color: #0f172a;
+            padding: 8px 14px;
+            border-radius: 6px;
+            font-size: 0.88rem;
             font-weight: 600;
             cursor: pointer;
             border: none;
-            transition: background 0.2s;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            background: var(--accent);
+            color: #0f172a;
         }
 
         button:hover {
             background: var(--accent-hover);
             color: #ffffff;
-        }
-
-        button.btn-danger {
-            background: var(--danger);
-            color: #ffffff;
-        }
-        button.btn-danger:hover {
-            background: #b91c1c;
         }
 
         button.btn-secondary {
@@ -196,102 +133,80 @@
             color: var(--accent);
         }
 
-        .preset-bar {
+        button.btn-danger {
+            background: var(--danger);
+            color: #ffffff;
+        }
+        button.btn-danger:hover {
+            background: #b91c1c;
+        }
+
+        button.btn-success {
+            background: var(--success);
+            color: #0f172a;
+        }
+        button.btn-success:hover {
+            background: #16a34a;
+            color: #ffffff;
+        }
+
+        .btn-sm {
+            padding: 4px 8px;
+            font-size: 0.78rem;
+        }
+
+        /* Banner de Sesión Activa */
+        .session-banner {
+            background: #090d16;
+            border: 1px solid var(--accent);
+            border-radius: 8px;
+            padding: 14px 18px;
+            margin-bottom: 20px;
             display: flex;
-            gap: 8px;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 14px;
+        }
+
+        .session-meta-items {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            font-size: 0.88rem;
+        }
+
+        .meta-item strong {
+            color: var(--text-secondary);
+            font-weight: 500;
+            margin-right: 4px;
+        }
+
+        .timer-badge {
+            font-family: ui-monospace, SFMono-Regular, monospace;
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--warning);
+            background: rgba(245, 158, 11, 0.12);
+            padding: 2px 10px;
+            border-radius: 4px;
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+
+        /* Barra de herramientas CRUD */
+        .crud-toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
             margin-bottom: 12px;
             flex-wrap: wrap;
         }
 
-        .btn-preset {
-            width: auto;
-            margin: 0;
-            padding: 4px 10px;
-            font-size: 0.78rem;
-            background: rgba(56, 189, 248, 0.12);
-            color: var(--accent);
-            border: 1px solid rgba(56, 189, 248, 0.3);
-            border-radius: 4px;
-            font-weight: 500;
-        }
-
-        .btn-preset:hover {
-            background: var(--accent);
-            color: #0f172a;
-        }
-
-        .code-block {
-            background: #090d16;
-            border: 1px solid var(--border);
-            border-radius: 6px;
-            padding: 10px;
-            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-            font-size: 0.78rem;
-            color: #e2e8f0;
-            white-space: pre-wrap;
-            word-break: break-all;
-            margin-bottom: 12px;
-            max-height: 180px;
-            overflow-y: auto;
-        }
-
-        .session-info {
-            background: #0f172a;
-            border-left: 4px solid var(--warning);
-            padding: 12px;
-            border-radius: 4px;
-            font-size: 0.85rem;
-            margin-bottom: 14px;
-        }
-
-        .session-active {
-            border-left-color: var(--success);
-        }
-
-        .timer {
-            font-family: monospace;
-            font-weight: bold;
-            color: var(--warning);
-            font-size: 1.1rem;
-        }
-
-        .magic-link-box {
-            background: #090d16;
-            border: 1px dashed var(--accent);
-            padding: 10px;
-            border-radius: 6px;
-            margin-top: 10px;
-            margin-bottom: 10px;
-            word-break: break-all;
-            font-size: 0.8rem;
-            color: var(--accent);
-            font-family: monospace;
-        }
-
-        .file-list {
-            list-style: none;
-            margin-top: 10px;
-        }
-
-        .file-item {
+        .crud-actions {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 12px;
-            border-bottom: 1px solid var(--border);
-            font-size: 0.9rem;
-        }
-
-        .file-item:hover {
-            background: var(--bg-card);
-        }
-
-        .file-name {
-            display: flex;
-            align-items: center;
             gap: 8px;
-            cursor: pointer;
-            color: var(--accent);
+            align-items: center;
         }
 
         .breadcrumbs {
@@ -303,37 +218,85 @@
             border-radius: 6px;
             font-size: 0.85rem;
             color: var(--text-secondary);
-            margin-bottom: 12px;
+            flex-grow: 1;
         }
 
         .breadcrumbs span {
             cursor: pointer;
             color: var(--accent);
+            font-weight: 500;
         }
 
-        table {
+        /* Tabla de Archivos */
+        table.file-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.88rem;
+            margin-top: 6px;
+        }
+
+        table.file-table th, table.file-table td {
+            padding: 10px 12px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        table.file-table th {
+            background: var(--bg-card);
+            color: var(--text-secondary);
+            font-weight: 600;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+        }
+
+        table.file-table tr:hover {
+            background: rgba(51, 65, 85, 0.5);
+        }
+
+        .file-name-cell {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            color: var(--accent);
+            font-weight: 500;
+        }
+
+        .file-name-cell:hover {
+            text-decoration: underline;
+        }
+
+        .row-actions {
+            display: flex;
+            gap: 6px;
+            justify-content: flex-end;
+        }
+
+        /* Tabla de Auditoría */
+        table.audit-table {
             width: 100%;
             border-collapse: collapse;
             font-size: 0.82rem;
-            margin-top: 10px;
+            margin-top: 8px;
         }
 
-        th, td {
+        table.audit-table th, table.audit-table td {
             padding: 8px 10px;
             text-align: left;
             border-bottom: 1px solid var(--border);
         }
 
-        th {
+        table.audit-table th {
             background: var(--bg-card);
             color: var(--text-secondary);
+            font-size: 0.78rem;
         }
 
         .status-pill {
             display: inline-block;
-            padding: 2px 6px;
+            padding: 2px 7px;
             border-radius: 4px;
-            font-size: 0.75rem;
+            font-size: 0.72rem;
             font-weight: bold;
         }
 
@@ -347,8 +310,9 @@
             color: var(--danger);
         }
 
+        /* Notificaciones */
         .notice {
-            padding: 12px;
+            padding: 12px 16px;
             border-radius: 6px;
             margin-bottom: 16px;
             font-size: 0.88rem;
@@ -368,432 +332,376 @@
             border: 1px solid var(--accent);
             color: #bae6fd;
         }
+
+        /* Modales */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            width: 90%;
+            max-width: 650px;
+            padding: 22px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 14px;
+        }
+
+        .modal-header h3 {
+            font-size: 1.15rem;
+            color: var(--accent);
+        }
+
+        .modal-close {
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 1.2rem;
+            padding: 2px 8px;
+            cursor: pointer;
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 14px;
+        }
+
+        .home-card {
+            max-width: 640px;
+            margin: 40px auto;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
     <div class="container">
+        <!-- Encabezado Principal -->
         <header>
             <div class="logo-area">
                 <h1>🗄️ S3 Explorer IDP <span class="tag">JIT Platform</span></h1>
                 <p style="color: var(--text-secondary); font-size: 0.85rem;">Just-In-Time Ephemeral Sessions & Audit Platform</p>
             </div>
-            <div class="header-actions">
-                <span class="badge-status badge-sandbox" id="envBadge">
-                    <span>🧪</span> <span id="envBadgeText">Modo Sandbox</span>
-                </span>
-                <button id="btnToggleMode" class="btn-mode-toggle" title="Alternar entre modo Sandbox y Producción">
-                    ⇄ Cambiar a Producción
-                </button>
+            <div id="headerActions">
+                <!-- Se poblará dinámicamente si hay sesión o no -->
             </div>
         </header>
 
         <div id="alertBox"></div>
 
-        <div class="grid">
-            <!-- Panel Izquierdo: Gestión de Sesión / Sandbox Tester -->
-            <div>
-                <!-- MODO SANDBOX: Probador de POST Dummy -->
-                <div class="card" id="sandboxCard">
-                    <h2>
-                        <span>🧪 Sandbox: Tester Webhook / POST</span>
-                        <span style="font-size: 0.75rem; color: var(--warning); font-weight: normal;">Simulador Dummy</span>
-                    </h2>
-                    <p style="color: var(--text-secondary); font-size: 0.8rem; margin-bottom: 12px;">
-                        Generá un POST dummy idéntico al enviado por Jira, Slack o CLI para crear sesiones JIT.
-                    </p>
+        <!-- =================================================================== -->
+        <!-- 1. VISTA PÁGINA PRINCIPAL (Cuando NO hay sesión activa)              -->
+        <!-- =================================================================== -->
+        <div id="homeView">
+            <div class="card home-card">
+                <h2>🔑 Acceso al Bucket S3</h2>
+                <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 20px;">
+                    Las credenciales se emiten bajo demanda (JIT) con validez temporal y permisos restringidos exclusivamente a tu bucket.
+                </p>
 
-                    <div class="preset-bar">
-                        <button class="btn-preset" onclick="applyPreset('dev')">⚡ Dev Interno</button>
-                        <button class="btn-preset" onclick="applyPreset('secops')">🛡️ SecOps Audit</button>
-                        <button class="btn-preset" onclick="applyPreset('cross')">🏢 Cross-Account</button>
-                    </div>
+                <label for="magicLinkInput" style="text-align: left;">Ingresá con tu Magic Link o Session ID:</label>
+                <input type="text" id="magicLinkInput" placeholder="http://.../?session=xxx  o hash UUID" />
+                <button id="btnOpenSession" style="width: 100%; margin-bottom: 20px;">🚀 Ingresar al Explorador</button>
 
-                    <label for="bucketInput">Nombre del Bucket S3:</label>
-                    <input type="text" id="bucketInput" placeholder="ej: fvrsn-example-1-..." />
+                <div id="dummySection" style="border-top: 1px solid var(--border); padding-top: 18px; text-align: left; display: none;">
+                    <details>
+                        <summary style="cursor: pointer; color: var(--accent); font-size: 0.88rem; font-weight: 500;">
+                            ⚙️ Aprovisionar Sesión de Prueba (POST Dummy)
+                        </summary>
+                        <div style="margin-top: 14px;">
+                            <label for="dummyBucket">Bucket S3:</label>
+                            <input type="text" id="dummyBucket" placeholder="ej: fvrsn-example-1-..." />
 
-                    <label for="emailInput">Correo del Solicitante:</label>
-                    <input type="email" id="emailInput" placeholder="ej: dev@empresa.com" />
+                            <label for="dummyEmail">Correo solicitante:</label>
+                            <input type="email" id="dummyEmail" value="dev@feversani.internal" />
 
-                    <label for="userInput">Usuario Solicitante:</label>
-                    <input type="text" id="userInput" placeholder="ej: dfeversani" />
+                            <label for="dummyUser">Usuario solicitante:</label>
+                            <input type="text" id="dummyUser" value="dfeversani" />
 
-                    <label for="accountInput">AWS Account ID (Opcional - Rol Remoto):</label>
-                    <input type="text" id="accountInput" placeholder="Dejar vacío para cuenta local" />
-
-                    <label for="durationSelect">Duración de la Sesión STS:</label>
-                    <select id="durationSelect">
-                        <option value="15" selected>15 Minutos (Mínimo STS)</option>
-                        <option value="30">30 Minutos</option>
-                        <option value="60">1 Hora</option>
-                    </select>
-
-                    <button id="btnCreateSession">🚀 Enviar POST /api/provision-session</button>
-
-                    <!-- Salida del Dummy POST en Sandbox -->
-                    <div id="sandboxResponseArea" style="display: none; margin-top: 14px;">
-                        <label>🔗 Magic Link Generado (Resultado del POST):</label>
-                        <div class="magic-link-box" id="magicLinkText"></div>
-                        <div style="display: flex; gap: 8px;">
-                            <button onclick="copyMagicLink()" class="btn-secondary" style="font-size: 0.8rem; padding: 7px; margin-bottom: 0;">📋 Copiar Link</button>
-                            <button onclick="activateCurrentMagicLink()" style="font-size: 0.8rem; padding: 7px; margin-bottom: 0;">⚡ Probar en Explorador</button>
+                            <button id="btnCreateDummy" class="btn-success" style="width: 100%; margin-top: 6px;">
+                                ⚡ Generar Sesión Efímera e Ingresar
+                            </button>
                         </div>
+                    </details>
+                </div>
+            </div>
+        </div>
 
-                        <label style="margin-top: 12px;">Comando cURL equivalente:</label>
-                        <div class="code-block" id="curlSnippet"></div>
+        <!-- =================================================================== -->
+        <!-- 2. VISTA DE SESIÓN ACTIVA (Solo Explorador de Archivos y Auditoría)   -->
+        <!-- =================================================================== -->
+        <div id="sessionView" style="display: none;">
+            <!-- Banner de Sesión -->
+            <div class="session-banner">
+                <div class="session-meta-items">
+                    <div class="meta-item">
+                        <strong>Bucket:</strong> <span id="sessBucket" style="color: var(--accent); font-weight: 600;"></span>
+                    </div>
+                    <div class="meta-item">
+                        <strong>Usuario:</strong> <span id="sessUser"></span> (<span id="sessEmail" style="color: var(--text-secondary);"></span>)
+                    </div>
+                    <div class="meta-item">
+                        <strong>Cuenta AWS:</strong> <code id="sessAccount">Local</code>
+                    </div>
+                    <div class="meta-item">
+                        <strong>Tiempo Restante:</strong> <span class="timer-badge" id="sessTimer">--:--</span>
                     </div>
                 </div>
-
-                <!-- MODO PRODUCCIÓN: Tarjeta Informativa / Carga Manual de Magic Link -->
-                <div class="card" id="prodWelcomeCard" style="display: none;">
-                    <h2>
-                        <span>🔒 Portal IDP (Producción)</span>
-                        <span class="status-pill status-ALLOWED">Activo</span>
-                    </h2>
-                    <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 14px;">
-                        En modo <strong>Producción</strong>, las sesiones efímeras se aprovisionan de forma segura mediante llamadas autenticadas de servicios externos (Slack Bot, Jira Service Desk, GitHub Actions o CLI).
-                    </p>
-                    <div class="notice notice-info" style="margin-bottom: 14px;">
-                        💡 Accedé directamente abriendo el <strong>Magic Link</strong> (<code>?session=UUID</code>) que recibiste en tu notificación de aprobación.
-                    </div>
-
-                    <label for="manualSessionInput">O pegá tu Magic Link / Session ID aquí:</label>
-                    <input type="text" id="manualSessionInput" placeholder="http://.../?session=abc123... o hash UUID" />
-                    <button id="btnLoadManualSession">Ingresar a Sesión</button>
-                </div>
-
-                <!-- Tarjeta de Sesión Activa (Común a ambos modos) -->
-                <div class="card" id="sessionCard">
-                    <h2>2. Sesión Activa (STS)</h2>
-                    <div id="noSessionNotice" style="color: var(--text-secondary); font-size: 0.85rem;">
-                        No hay ninguna sesión activa. Ejecutá un POST en Sandbox o ingresá con un Magic Link.
-                    </div>
-                    <div id="activeSessionDetails" style="display: none;">
-                        <div class="session-info session-active">
-                            <strong>Bucket Asignado:</strong> <span id="sessBucket" style="color: var(--accent);"></span><br>
-                            <strong>Usuario:</strong> <span id="sessUser"></span> (<span id="sessEmail"></span>)<br>
-                            <strong>Cuenta AWS:</strong> <span id="sessAccount"></span><br>
-                            <strong>Tiempo Restante:</strong> <span class="timer" id="sessTimer">--:--</span><br>
-                            <strong>Session Hash:</strong> <span id="sessId" style="font-family: monospace; font-size: 0.75rem;"></span>
-                        </div>
-                        <p style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 10px;">
-                            🔒 Credenciales restringidas en tiempo real con <strong>Session Policy</strong> exclusiva para este bucket.
-                        </p>
-                        <button class="btn-danger" id="btnTestForbidden" style="font-size: 0.85rem; padding: 8px;">
-                            🧪 Probar Acceso Cruzado (Verificar 403 Forbidden)
-                        </button>
-                    </div>
+                <div style="display: flex; gap: 8px;">
+                    <button class="btn-secondary btn-sm" id="btnTestForbidden" title="Verificar frontera de seguridad">
+                        🧪 Test 403
+                    </button>
+                    <button class="btn-danger btn-sm" onclick="closeSession()">
+                        ✕ Salir
+                    </button>
                 </div>
             </div>
 
-            <!-- Panel Derecho: Explorador S3 y Auditoría -->
-            <div>
-                <div class="card">
-                    <h2>
-                        <span>3. Explorador de Archivos</span>
-                        <button id="btnRefresh" class="btn-secondary" style="width: auto; padding: 4px 12px; font-size: 0.8rem; margin: 0;">↻ Refrescar</button>
-                    </h2>
+            <!-- Explorador de Archivos con Botones de Operación CRUD -->
+            <div class="card">
+                <h2>
+                    <span>Explorador de Archivos</span>
+                </h2>
 
+                <div class="crud-toolbar">
                     <div class="breadcrumbs" id="breadcrumbs">
                         <span onclick="navigateTo('')">root</span>
                     </div>
-
-                    <div id="fileExplorerContent">
-                        <p style="color: var(--text-secondary); font-size: 0.9rem;">
-                            Generá una sesión o abrí un Magic Link para inspeccionar objetos.
-                        </p>
+                    <div class="crud-actions">
+                        <button class="btn-success btn-sm" onclick="openCreateModal()">
+                            ➕ Nuevo Archivo
+                        </button>
+                        <button class="btn-secondary btn-sm" onclick="openFolderModal()">
+                            📁 Nueva Carpeta
+                        </button>
+                        <button class="btn-secondary btn-sm" onclick="refreshFiles()">
+                            ↻ Refrescar
+                        </button>
                     </div>
                 </div>
 
-                <div class="card">
-                    <h2>4. Auditoría Fail-Closed (DynamoDB)</h2>
-                    <p style="color: var(--text-secondary); font-size: 0.8rem; margin-bottom: 8px;">
-                        Trazabilidad completa: Correo, Usuario, Cuenta AWS, Acción y Objeto con TTL nativo.
-                    </p>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Timestamp</th>
-                                <th>Usuario / Email</th>
-                                <th>Cuenta AWS</th>
-                                <th>Acción</th>
-                                <th>Bucket / Key</th>
-                                <th>Estado</th>
-                            </tr>
-                        </thead>
-                        <tbody id="auditTableBody">
-                            <tr>
-                                <td colspan="6" style="color: var(--text-secondary); text-align: center;">Sin registros aún.</td>
-                            </tr>
-                        </tbody>
-                    </table>
+                <div id="fileTableContainer">
+                    <!-- Se renderizará la tabla de archivos -->
                 </div>
+            </div>
+
+            <!-- Tabla de Auditoría -->
+            <div class="card">
+                <h2>
+                    <span>Auditoría en Tiempo Real (DynamoDB)</span>
+                    <button class="btn-secondary btn-sm" onclick="loadAudits()">↻ Refrescar Logs</button>
+                </h2>
+                <table class="audit-table">
+                    <thead>
+                        <tr>
+                            <th>Timestamp</th>
+                            <th>Usuario / Email</th>
+                            <th>Cuenta AWS</th>
+                            <th>Acción</th>
+                            <th>Objeto / Prefijo</th>
+                            <th>Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody id="auditTableBody">
+                        <tr>
+                            <td colspan="6" style="color: var(--text-secondary); text-align: center;">Sin registros aún.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- =================================================================== -->
+    <!-- MODALES DE OPERACIÓN CRUD                                            -->
+    <!-- =================================================================== -->
+
+    <!-- Modal Crear / Subir Archivo -->
+    <div class="modal-overlay" id="createModal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>➕ Crear / Subir Archivo</h3>
+                <button class="modal-close" onclick="closeModal('createModal')">✕</button>
+            </div>
+            <label for="createFileName">Nombre del Archivo (en la carpeta actual):</label>
+            <input type="text" id="createFileName" placeholder="ej: documento.txt o config.json" />
+
+            <label for="createFileContent">Contenido del Archivo:</label>
+            <textarea id="createFileContent" rows="7" placeholder="Escribí el contenido del archivo aquí..."></textarea>
+
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeModal('createModal')">Cancelar</button>
+                <button class="btn-success" onclick="submitCreateFile()">Guardar en S3</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Nueva Carpeta -->
+    <div class="modal-overlay" id="folderModal" style="display: none;">
+        <div class="modal-content" style="max-width: 450px;">
+            <div class="modal-header">
+                <h3>📁 Nueva Carpeta</h3>
+                <button class="modal-close" onclick="closeModal('folderModal')">✕</button>
+            </div>
+            <label for="folderNameInput">Nombre de la Carpeta:</label>
+            <input type="text" id="folderNameInput" placeholder="ej: reportes, logs, datos" />
+
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeModal('folderModal')">Cancelar</button>
+                <button class="btn-success" onclick="submitCreateFolder()">Crear Carpeta</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Editar Archivo -->
+    <div class="modal-overlay" id="editModal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>✏️ Editar Archivo</h3>
+                <button class="modal-close" onclick="closeModal('editModal')">✕</button>
+            </div>
+            <label>Archivo:</label>
+            <input type="text" id="editFileName" disabled style="opacity: 0.8;" />
+
+            <label for="editFileContent">Contenido:</label>
+            <textarea id="editFileContent" rows="10"></textarea>
+
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeModal('editModal')">Cancelar</button>
+                <button class="btn-success" onclick="submitEditFile()">Guardar Cambios</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Ver Archivo -->
+    <div class="modal-overlay" id="viewModal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>📄 Contenido de <span id="viewFileName" style="color: var(--text-primary); font-size: 0.95rem;"></span></h3>
+                <button class="modal-close" onclick="closeModal('viewModal')">✕</button>
+            </div>
+            <textarea id="viewFileContent" rows="12" readonly style="font-family: monospace; font-size: 0.85rem;"></textarea>
+
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeModal('viewModal')">Cerrar</button>
             </div>
         </div>
     </div>
 
     <script>
-        let currentMode = "sandbox"; // 'sandbox' o 'prod'
         let currentSession = null;
         let currentPrefix = "";
         let timerInterval = null;
         let defaultBucket = "";
-        let defaultAccount = "";
 
-        // Elementos DOM
-        const envBadge = document.getElementById("envBadge");
-        const envBadgeText = document.getElementById("envBadgeText");
-        const btnToggleMode = document.getElementById("btnToggleMode");
-        const sandboxCard = document.getElementById("sandboxCard");
-        const prodWelcomeCard = document.getElementById("prodWelcomeCard");
+        const homeView = document.getElementById("homeView");
+        const sessionView = document.getElementById("sessionView");
+        const alertBox = document.getElementById("alertBox");
 
-        const bucketInput = document.getElementById("bucketInput");
-        const emailInput = document.getElementById("emailInput");
-        const userInput = document.getElementById("userInput");
-        const accountInput = document.getElementById("accountInput");
-        const durationSelect = document.getElementById("durationSelect");
-        const btnCreateSession = document.getElementById("btnCreateSession");
-        const sandboxResponseArea = document.getElementById("sandboxResponseArea");
-        const magicLinkText = document.getElementById("magicLinkText");
-        const curlSnippet = document.getElementById("curlSnippet");
+        const magicLinkInput = document.getElementById("magicLinkInput");
+        const btnOpenSession = document.getElementById("btnOpenSession");
+        const dummyBucket = document.getElementById("dummyBucket");
+        const dummyEmail = document.getElementById("dummyEmail");
+        const dummyUser = document.getElementById("dummyUser");
+        const btnCreateDummy = document.getElementById("btnCreateDummy");
 
-        const manualSessionInput = document.getElementById("manualSessionInput");
-        const btnLoadManualSession = document.getElementById("btnLoadManualSession");
-
-        const sessionCard = document.getElementById("sessionCard");
-        const activeSessionDetails = document.getElementById("activeSessionDetails");
-        const noSessionNotice = document.getElementById("noSessionNotice");
         const sessBucket = document.getElementById("sessBucket");
         const sessUser = document.getElementById("sessUser");
         const sessEmail = document.getElementById("sessEmail");
         const sessAccount = document.getElementById("sessAccount");
-        const sessId = document.getElementById("sessId");
         const sessTimer = document.getElementById("sessTimer");
-        const fileExplorerContent = document.getElementById("fileExplorerContent");
+        const fileTableContainer = document.getElementById("fileTableContainer");
         const auditTableBody = document.getElementById("auditTableBody");
-        const alertBox = document.getElementById("alertBox");
 
         function showAlert(msg, type = "success") {
             alertBox.innerHTML = `<div class="notice notice-${type}">${msg}</div>`;
-            setTimeout(() => { alertBox.innerHTML = ""; }, 6000);
+            setTimeout(() => { alertBox.innerHTML = ""; }, 5000);
         }
-
-        // Cambio de Modo (Sandbox vs Prod)
-        function setMode(mode) {
-            currentMode = mode;
-            localStorage.setItem("s3_explorer_mode", mode);
-
-            if (mode === "prod") {
-                envBadge.className = "badge-status badge-prod";
-                envBadge.innerHTML = "<span>🔒</span> <span>Modo Producción</span>";
-                btnToggleMode.innerHTML = "⇄ Activar Modo Sandbox";
-                sandboxCard.style.display = "none";
-                prodWelcomeCard.style.display = "block";
-            } else {
-                envBadge.className = "badge-status badge-sandbox";
-                envBadge.innerHTML = "<span>🧪</span> <span>Modo Sandbox</span>";
-                btnToggleMode.innerHTML = "⇄ Pasar a Producción";
-                sandboxCard.style.display = "block";
-                prodWelcomeCard.style.display = "none";
-            }
-        }
-
-        btnToggleMode.addEventListener("click", () => {
-            const nextMode = (currentMode === "sandbox") ? "prod" : "sandbox";
-            setMode(nextMode);
-            showAlert(`Cambiado a <strong>${nextMode === 'prod' ? 'Modo Producción' : 'Modo Sandbox'}</strong>`, "info");
-        });
-
-        // Presets para pruebas dummy en Sandbox
-        function applyPreset(presetType) {
-            const baseBucket = defaultBucket || "fvrsn-example-1-secops";
-            if (presetType === "dev") {
-                bucketInput.value = baseBucket;
-                emailInput.value = "dev-user@feversani.internal";
-                userInput.value = "developer";
-                accountInput.value = "";
-                durationSelect.value = "15";
-            } else if (presetType === "secops") {
-                bucketInput.value = baseBucket;
-                emailInput.value = "secops-audit@feversani.internal";
-                userInput.value = "secops-auditor";
-                accountInput.value = "";
-                durationSelect.value = "30";
-            } else if (presetType === "cross") {
-                bucketInput.value = "fvrsn-cross-account-storage";
-                emailInput.value = "cloud-architect@empresa.com";
-                userInput.value = "arch-team";
-                accountInput.value = "123456789012";
-                durationSelect.value = "60";
-            }
-            updateCurlSnippet();
-            showAlert(`Preset <strong>${presetType}</strong> cargado en el formulario.`, "info");
-        }
-
-        function updateCurlSnippet() {
-            const bucket = bucketInput.value.trim() || "<BUCKET_NAME>";
-            const email = emailInput.value.trim() || "dev@empresa.com";
-            const username = userInput.value.trim() || "dev-user";
-            const accountId = accountInput.value.trim();
-            const duration = durationSelect.value;
-            const origin = window.location.origin || "http://localhost:8080";
-
-            const payload = {
-                bucket_name: bucket,
-                email: email,
-                username: username,
-                duration_minutes: parseInt(duration, 10)
-            };
-            if (accountId) payload.aws_account_id = accountId;
-
-            curlSnippet.innerText = `curl -X POST "${origin}/api/provision-session" \\\n  -H "Content-Type: application/json" \\\n  -d '${JSON.stringify(payload)}'`;
-        }
-
-        [bucketInput, emailInput, userInput, accountInput, durationSelect].forEach(el => {
-            el.addEventListener("input", updateCurlSnippet);
-            el.addEventListener("change", updateCurlSnippet);
-        });
 
         async function initApp() {
-            // Cargar modo preferido o del backend
-            const savedMode = localStorage.getItem("s3_explorer_mode");
             try {
                 const res = await fetch("/api/info");
                 const data = await res.json();
                 defaultBucket = data.default_bucket || "";
-                defaultAccount = data.default_account_id || "";
-
-                if (data.default_bucket) bucketInput.value = data.default_bucket;
-                if (data.default_account_id) accountInput.placeholder = `Actual: ${data.default_account_id}`;
-
-                // Si no hay preferencia en localStorage, usar la que viene del server
-                const initialMode = savedMode || data.mode || "sandbox";
-                setMode(initialMode);
+                if (data.default_bucket) dummyBucket.value = data.default_bucket;
+                if (data.enable_sandbox) {
+                    const dummySec = document.getElementById("dummySection");
+                    if (dummySec) dummySec.style.display = "block";
+                }
             } catch (e) {
                 console.error(e);
-                setMode(savedMode || "sandbox");
             }
-
-            updateCurlSnippet();
 
             // Detectar Magic Link (?session=UUID)
             const params = new URLSearchParams(window.location.search);
             const sessionParam = params.get("session");
             if (sessionParam) {
-                await loadMagicLinkSession(sessionParam);
+                await loadSession(sessionParam);
+            } else {
+                showHomeView();
             }
-
-            loadAudits();
         }
 
-        async function loadMagicLinkSession(sessionId) {
+        function showHomeView() {
+            currentSession = null;
+            if (timerInterval) clearInterval(timerInterval);
+            sessionView.style.display = "none";
+            homeView.style.display = "block";
+            // Limpiar parámetro de URL si existe
+            if (window.location.search) {
+                window.history.replaceState({}, document.title, window.location.pathname);
+            }
+        }
+
+        function closeSession() {
+            showHomeView();
+            showAlert("Sesión cerrada.", "info");
+        }
+
+        async function loadSession(sessionId) {
             try {
-                showAlert("Validando Magic Link...", "info");
+                showAlert("Validando sesión...", "info");
                 const res = await fetch(`/api/sessions/validate?session=${encodeURIComponent(sessionId)}`);
                 const data = await res.json();
                 if (!res.ok) {
-                    throw new Error(data.error || "El link de sesión expiró o es inválido.");
+                    throw new Error(data.error || "La sesión expiró o es inválida.");
                 }
 
                 currentSession = data;
-                renderActiveSession();
-                navigateTo("");
-                showAlert(`✅ Sesión cargada exitosamente para <strong>${data.email || data.username}</strong> en bucket <strong>${data.target_bucket}</strong>`, "success");
-            } catch (err) {
-                showAlert(err.message, "error");
-            }
-        }
-
-        // Aprovisionamiento POST en Sandbox
-        btnCreateSession.addEventListener("click", async () => {
-            const bucket = bucketInput.value.trim();
-            const email = emailInput.value.trim();
-            const username = userInput.value.trim();
-            const accountId = accountInput.value.trim();
-            const duration = parseInt(durationSelect.value, 10);
-
-            if (!bucket) {
-                showAlert("Por favor ingresá un nombre de bucket.", "error");
-                return;
-            }
-
-            btnCreateSession.disabled = true;
-            btnCreateSession.innerText = "⏳ Enviando POST /api/provision-session...";
-
-            try {
-                const res = await fetch("/api/provision-session", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        bucket_name: bucket,
-                        email: email,
-                        username: username,
-                        aws_account_id: accountId,
-                        duration_minutes: duration
-                    })
-                });
-
-                const data = await res.json();
-                if (!res.ok) {
-                    throw new Error(data.message || data.error || "Error al aprovisionar sesión");
-                }
-
-                currentSession = data;
-                renderActiveSession();
-
-                // Mostrar respuesta del Sandbox
-                sandboxResponseArea.style.display = "block";
-                magicLinkText.innerText = data.magic_link;
-
+                renderSessionView();
                 navigateTo("");
                 loadAudits();
-                showAlert("✨ Sesión aprovisionada con éxito vía POST dummy. Magic Link listo.", "success");
+                showAlert(`✅ Acceso concedido al bucket <strong>${data.target_bucket}</strong>`, "success");
             } catch (err) {
+                showHomeView();
                 showAlert(err.message, "error");
-            } finally {
-                btnCreateSession.disabled = false;
-                btnCreateSession.innerText = "🚀 Enviar POST /api/provision-session";
-            }
-        });
-
-        // Carga manual desde Producción
-        btnLoadManualSession.addEventListener("click", async () => {
-            let val = manualSessionInput.value.trim();
-            if (!val) {
-                showAlert("Por favor pegá una URL de Magic Link o un Hash de sesión.", "error");
-                return;
-            }
-            if (val.includes("session=")) {
-                try {
-                    const parsedUrl = new URL(val);
-                    val = parsedUrl.searchParams.get("session") || val;
-                } catch (e) {
-                    const match = val.match(/session=([a-zA-Z0-9_-]+)/);
-                    if (match) val = match[1];
-                }
-            }
-            await loadMagicLinkSession(val);
-        });
-
-        function copyMagicLink() {
-            navigator.clipboard.writeText(magicLinkText.innerText);
-            showAlert("📋 Magic Link copiado al portapapeles!", "success");
-        }
-
-        function activateCurrentMagicLink() {
-            if (currentSession && currentSession.session_id) {
-                loadMagicLinkSession(currentSession.session_id);
             }
         }
 
-        function renderActiveSession() {
-            if (!currentSession) return;
-            noSessionNotice.style.display = "none";
-            activeSessionDetails.style.display = "block";
+        function renderSessionView() {
+            homeView.style.display = "none";
+            sessionView.style.display = "block";
+
             sessBucket.innerText = currentSession.target_bucket;
             sessUser.innerText = currentSession.username || "dev-user";
             sessEmail.innerText = currentSession.email || "N/A";
             sessAccount.innerText = currentSession.aws_account_id || "Cuenta Local";
-            sessId.innerText = currentSession.session_id;
 
             if (timerInterval) clearInterval(timerInterval);
             updateTimer();
@@ -809,6 +717,7 @@
                 sessTimer.innerText = "EXPIRADA";
                 sessTimer.style.color = "var(--danger)";
                 clearInterval(timerInterval);
+                showAlert("La sesión ha expirado.", "error");
                 return;
             }
 
@@ -817,16 +726,70 @@
             sessTimer.innerText = `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
         }
 
+        // Ingreso manual por Magic Link en la página principal
+        btnOpenSession.addEventListener("click", () => {
+            let val = magicLinkInput.value.trim();
+            if (!val) {
+                showAlert("Por favor ingresá un Magic Link o Session ID.", "error");
+                return;
+            }
+            if (val.includes("session=")) {
+                try {
+                    const u = new URL(val);
+                    val = u.searchParams.get("session") || val;
+                } catch(e) {
+                    const match = val.match(/session=([a-zA-Z0-9_-]+)/);
+                    if (match) val = match[1];
+                }
+            }
+            loadSession(val);
+        });
+
+        // Aprovisionamiento Dummy en la página principal
+        btnCreateDummy.addEventListener("click", async () => {
+            const bucket = dummyBucket.value.trim();
+            const email = dummyEmail.value.trim();
+            const user = dummyUser.value.trim();
+
+            if (!bucket) {
+                showAlert("Ingresá un nombre de bucket.", "error");
+                return;
+            }
+
+            btnCreateDummy.disabled = true;
+            btnCreateDummy.innerText = "Aprovisionando...";
+
+            try {
+                const res = await fetch("/api/provision-session", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        bucket_name: bucket,
+                        email: email,
+                        username: user,
+                        duration_minutes: 15
+                    })
+                });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.message || data.error);
+
+                // Cargar sesión
+                await loadSession(data.session_id);
+            } catch (err) {
+                showAlert(err.message, "error");
+            } finally {
+                btnCreateDummy.disabled = false;
+                btnCreateDummy.innerText = "⚡ Generar Sesión Efímera e Ingresar";
+            }
+        });
+
+        // Navegación de Archivos
         async function navigateTo(prefix) {
             currentPrefix = prefix;
             updateBreadcrumbs();
 
-            if (!currentSession) {
-                fileExplorerContent.innerHTML = "<p style='color: var(--text-secondary);'>Generá una sesión o abrí un Magic Link para ver archivos.</p>";
-                return;
-            }
-
-            fileExplorerContent.innerHTML = "<p style='color: var(--text-secondary);'>Listando objetos vía STS Session Policy...</p>";
+            if (!currentSession) return;
+            fileTableContainer.innerHTML = "<p style='color: var(--text-secondary); padding: 12px;'>Listando objetos...</p>";
 
             try {
                 const url = `/api/objects?prefix=${encodeURIComponent(prefix)}&session_id=${encodeURIComponent(currentSession.session_id)}`;
@@ -834,17 +797,18 @@
                     headers: { "X-Session-ID": currentSession.session_id }
                 });
                 const data = await res.json();
+                if (!res.ok) throw new Error(data.message || data.error);
 
-                if (!res.ok) {
-                    throw new Error(data.message || data.error || "Error al listar objetos");
-                }
-
-                renderFiles(data);
+                renderFileTable(data);
                 loadAudits();
             } catch (err) {
-                fileExplorerContent.innerHTML = `<div class='notice notice-error'>Error al listar: ${err.message}</div>`;
+                fileTableContainer.innerHTML = `<div class='notice notice-error'>Error al listar: ${err.message}</div>`;
                 loadAudits();
             }
+        }
+
+        function refreshFiles() {
+            navigateTo(currentPrefix);
         }
 
         function updateBreadcrumbs() {
@@ -861,83 +825,263 @@
             bc.innerHTML = html;
         }
 
-        function renderFiles(data) {
-            let html = "<ul class='file-list'>";
+        function renderFileTable(data) {
+            const dirs = data.subdirectories || [];
+            const files = data.objects || [];
 
-            for (const dir of data.subdirectories || []) {
+            if (dirs.length === 0 && files.length === 0) {
+                fileTableContainer.innerHTML = `
+                    <div style="padding: 24px; text-align: center; color: var(--text-secondary);">
+                        El directorio actual está vacío. ¡Podés crear un archivo usando <strong>Nuevo Archivo</strong> arriba!
+                    </div>
+                `;
+                return;
+            }
+
+            let html = `
+                <table class="file-table">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Tamaño</th>
+                            <th>Última Modificación</th>
+                            <th style="text-align: right;">Acciones (CRUD)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            for (const dir of dirs) {
                 const name = dir.replace(data.prefix, "");
                 html += `
-                    <li class="file-item">
-                        <span class="file-name" onclick="navigateTo('${dir}')">📁 ${name}</span>
-                        <span style="color: var(--text-secondary); font-size: 0.8rem;">Directorio</span>
-                    </li>
+                    <tr>
+                        <td>
+                            <div class="file-name-cell" onclick="navigateTo('${dir}')">
+                                📁 ${name}
+                            </div>
+                        </td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td style="text-align: right;">
+                            <button class="btn-secondary btn-sm" onclick="navigateTo('${dir}')">Abrir</button>
+                        </td>
+                    </tr>
                 `;
             }
 
-            for (const obj of data.objects || []) {
+            for (const obj of files) {
+                // Si el objeto termina en "/" es una carpeta marcador
+                if (obj.key.endsWith("/")) continue;
+
                 const name = obj.key.replace(data.prefix, "");
                 const sizeKb = (obj.size / 1024).toFixed(1);
+                const modified = new Date(obj.last_modified).toLocaleString();
+
                 html += `
-                    <li class="file-item">
-                        <span class="file-name" onclick="viewObject('${obj.key}')">📄 ${name}</span>
-                        <span style="color: var(--text-secondary); font-size: 0.8rem;">${sizeKb} KB</span>
-                    </li>
+                    <tr>
+                        <td>
+                            <div class="file-name-cell" onclick="viewFile('${obj.key}')">
+                                📄 ${name}
+                            </div>
+                        </td>
+                        <td>${sizeKb} KB</td>
+                        <td>${modified}</td>
+                        <td class="row-actions">
+                            <button class="btn-secondary btn-sm" onclick="viewFile('${obj.key}')" title="Ver contenido (Read)">👁️ Ver</button>
+                            <button class="btn-secondary btn-sm" onclick="openEditModal('${obj.key}')" title="Editar contenido (Update)">✏️ Editar</button>
+                            <button class="btn-danger btn-sm" onclick="deleteFile('${obj.key}')" title="Eliminar archivo (Delete)">🗑️ Eliminar</button>
+                        </td>
+                    </tr>
                 `;
             }
 
-            if ((!data.subdirectories || data.subdirectories.length === 0) && (!data.objects || data.objects.length === 0)) {
-                html += `<li class="file-item" style="color: var(--text-secondary);">El bucket está vacío.</li>`;
-            }
-
-            html += "</ul>";
-            fileExplorerContent.innerHTML = html;
+            html += `</tbody></table>`;
+            fileTableContainer.innerHTML = html;
         }
 
-        async function viewObject(key) {
+        // =====================================================================
+        // OPERACIONES CRUD
+        // =====================================================================
+
+        // CREATE: Archivo
+        function openCreateModal() {
+            document.getElementById("createFileName").value = "";
+            document.getElementById("createFileContent").value = "";
+            document.getElementById("createModal").style.display = "flex";
+        }
+
+        async function submitCreateFile() {
+            const fileName = document.getElementById("createFileName").value.trim();
+            const content = document.getElementById("createFileContent").value;
+
+            if (!fileName) {
+                alert("Por favor ingresá un nombre de archivo.");
+                return;
+            }
+
+            const fullKey = (currentPrefix + fileName).replace(/^\/+/, "");
+            closeModal("createModal");
+
+            try {
+                showAlert(`Guardando ${fullKey} en S3...`, "info");
+                const res = await fetch("/api/objects/upload", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-Session-ID": currentSession.session_id
+                    },
+                    body: JSON.stringify({ key: fullKey, content: content })
+                });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.message || data.error);
+
+                showAlert(`✅ Archivo '${fullKey}' creado exitosamente en S3`, "success");
+                refreshFiles();
+            } catch (err) {
+                showAlert("Error al crear archivo: " + err.message, "error");
+                loadAudits();
+            }
+        }
+
+        // CREATE: Carpeta
+        function openFolderModal() {
+            document.getElementById("folderNameInput").value = "";
+            document.getElementById("folderModal").style.display = "flex";
+        }
+
+        async function submitCreateFolder() {
+            let folderName = document.getElementById("folderNameInput").value.trim();
+            if (!folderName) {
+                alert("Ingresá un nombre de carpeta.");
+                return;
+            }
+            if (!folderName.endsWith("/")) folderName += "/";
+            const fullKey = (currentPrefix + folderName).replace(/^\/+/, "");
+            closeModal("folderModal");
+
+            try {
+                showAlert(`Creando carpeta ${fullKey}...`, "info");
+                const res = await fetch("/api/objects/upload", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-Session-ID": currentSession.session_id
+                    },
+                    body: JSON.stringify({ key: fullKey, content: "" })
+                });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.message || data.error);
+
+                showAlert(`✅ Carpeta '${fullKey}' creada`, "success");
+                refreshFiles();
+            } catch (err) {
+                showAlert("Error al crear carpeta: " + err.message, "error");
+                loadAudits();
+            }
+        }
+
+        // READ: Ver
+        async function viewFile(key) {
             if (!currentSession) return;
             try {
-                const url = `/api/objects/content?key=${encodeURIComponent(key)}&session_id=${encodeURIComponent(currentSession.session_id)}`;
-                const res = await fetch(url, {
+                const res = await fetch(`/api/objects/content?key=${encodeURIComponent(key)}`, {
                     headers: { "X-Session-ID": currentSession.session_id }
                 });
                 if (!res.ok) {
                     const err = await res.json();
-                    throw new Error(err.message || err.error || "Error al descargar");
+                    throw new Error(err.message || err.error);
                 }
                 const text = await res.text();
-                alert(`Contenido de ${key}:\n\n` + text.slice(0, 500) + (text.length > 500 ? "\n..." : ""));
+                document.getElementById("viewFileName").innerText = key;
+                document.getElementById("viewFileContent").value = text;
+                document.getElementById("viewModal").style.display = "flex";
                 loadAudits();
             } catch (e) {
-                showAlert(e.message, "error");
+                showAlert("Error al leer archivo: " + e.message, "error");
+                loadAudits();
             }
         }
 
-        document.getElementById("btnTestForbidden").addEventListener("click", async () => {
+        // UPDATE: Editar
+        async function openEditModal(key) {
             if (!currentSession) return;
-            showAlert("Intentando acceder a otro bucket con la misma sesión...", "error");
             try {
-                const url = `/api/test-forbidden?session_id=${encodeURIComponent(currentSession.session_id)}`;
-                const res = await fetch(url, {
-                    method: "POST",
+                showAlert(`Cargando contenido de ${key}...`, "info");
+                const res = await fetch(`/api/objects/content?key=${encodeURIComponent(key)}`, {
                     headers: { "X-Session-ID": currentSession.session_id }
                 });
-                const data = await res.json();
-                if (res.status === 403) {
-                    showAlert("✅ Frontera verificada: AWS STS rechazó el acceso (403 AccessDenied) y quedó auditado.", "success");
-                } else {
-                    showAlert("Respuesta inesperada: " + JSON.stringify(data), "error");
+                if (!res.ok) {
+                    const err = await res.json();
+                    throw new Error(err.message || err.error);
                 }
-                loadAudits();
+                const text = await res.text();
+                document.getElementById("editFileName").value = key;
+                document.getElementById("editFileContent").value = text;
+                document.getElementById("editModal").style.display = "flex";
             } catch (e) {
-                showAlert("Error en la prueba: " + e.message, "error");
+                showAlert("Error al cargar para edición: " + e.message, "error");
             }
-        });
+        }
 
-        document.getElementById("btnRefresh").addEventListener("click", () => {
-            navigateTo(currentPrefix);
-            loadAudits();
-        });
+        async function submitEditFile() {
+            const key = document.getElementById("editFileName").value;
+            const content = document.getElementById("editFileContent").value;
+            closeModal("editModal");
 
+            try {
+                showAlert(`Actualizando ${key} en S3...`, "info");
+                const res = await fetch("/api/objects/upload", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-Session-ID": currentSession.session_id
+                    },
+                    body: JSON.stringify({ key: key, content: content })
+                });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.message || data.error);
+
+                showAlert(`✅ Archivo '${key}' actualizado exitosamente en S3`, "success");
+                refreshFiles();
+            } catch (err) {
+                showAlert("Error al actualizar: " + err.message, "error");
+                loadAudits();
+            }
+        }
+
+        // DELETE: Eliminar
+        async function deleteFile(key) {
+            if (!currentSession) return;
+            if (!confirm(`¿Estás seguro de que deseás eliminar '${key}' de S3?\nEsta acción quedará registrada en la auditoría.`)) {
+                return;
+            }
+
+            try {
+                showAlert(`Eliminando ${key}...`, "info");
+                const res = await fetch("/api/objects/delete", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-Session-ID": currentSession.session_id
+                    },
+                    body: JSON.stringify({ key: key })
+                });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.message || data.error);
+
+                showAlert(`🗑️ Archivo '${key}' eliminado con éxito.`, "success");
+                refreshFiles();
+            } catch (err) {
+                showAlert("Error al eliminar: " + err.message, "error");
+                loadAudits();
+            }
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).style.display = "none";
+        }
+
+        // Auditoría
         async function loadAudits() {
             try {
                 const res = await fetch("/api/audits");
@@ -958,6 +1102,27 @@
                 console.error(e);
             }
         }
+
+        // Test 403 Forbidden
+        document.getElementById("btnTestForbidden").addEventListener("click", async () => {
+            if (!currentSession) return;
+            showAlert("Intentando acceder a otro bucket con la misma sesión...", "info");
+            try {
+                const res = await fetch(`/api/test-forbidden?session_id=${encodeURIComponent(currentSession.session_id)}`, {
+                    method: "POST",
+                    headers: { "X-Session-ID": currentSession.session_id }
+                });
+                const data = await res.json();
+                if (res.status === 403) {
+                    showAlert("✅ Frontera verificada: AWS STS rechazó el acceso (403 AccessDenied) y quedó registrado en DynamoDB.", "success");
+                } else {
+                    showAlert("Respuesta inesperada: " + JSON.stringify(data), "error");
+                }
+                loadAudits();
+            } catch (e) {
+                showAlert("Error en la prueba: " + e.message, "error");
+            }
+        });
 
         initApp();
     </script>

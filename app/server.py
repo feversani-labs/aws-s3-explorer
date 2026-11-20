@@ -104,9 +104,11 @@ class S3ExplorerHandler(BaseHTTPRequestHandler):
         # 2. Información del entorno
         if path == "/api/info":
             broker_arn = session_broker.broker_role_arn or os.environ.get("BROKER_ROLE_ARN", "")
+            enable_sandbox = os.environ.get("ENABLE_SANDBOX", os.environ.get("MODE", "true")).lower() in ["true", "1", "yes", "sandbox"]
             return self._send_response(200, {
                 "status": "ready",
-                "mode": os.environ.get("MODE", "sandbox"),
+                "enable_sandbox": enable_sandbox,
+                "mode": "sandbox" if enable_sandbox else "prod",
                 "broker_role_configured": bool(broker_arn),
                 "broker_role_arn": broker_arn,
                 "dynamodb_configured": bool(audit_service.table_name),
@@ -243,6 +245,65 @@ class S3ExplorerHandler(BaseHTTPRequestHandler):
                 })
             except Exception as e:
                 return self._send_response(500, {"error": "Error al aprovisionar sesión", "message": str(e)})
+
+        # Operaciones CRUD sobre S3: Crear / Actualizar objeto
+        if path == "/api/objects/upload":
+            session_id = self.headers.get("X-Session-ID") or query.get("session_id")
+            session_data = get_active_session(session_id)
+            if not session_data:
+                return self._send_response(401, {"error": "Sesión inválida o expirada"})
+
+            data = self._read_body_json()
+            key = data.get("key", "").strip().lstrip("/")
+            content = data.get("content", "")
+            if not key:
+                return self._send_response(400, {"error": "El nombre del archivo (key) es requerido"})
+
+            try:
+                body_bytes = content.encode("utf-8") if isinstance(content, str) else content
+                s3_service.put_object(
+                    bucket=session_data["target_bucket"],
+                    key=key,
+                    body=body_bytes,
+                    credentials=session_data["credentials"],
+                    session_id=session_id,
+                    session_meta=session_data
+                )
+                return self._send_response(200, {"status": "success", "message": f"Archivo '{key}' guardado exitosamente"})
+            except ClientError as e:
+                code = e.response["Error"]["Code"]
+                return self._send_response(403 if code == "AccessDenied" else 500, {
+                    "error": code,
+                    "message": e.response["Error"]["Message"]
+                })
+
+        # Operaciones CRUD sobre S3: Eliminar objeto
+        if path == "/api/objects/delete":
+            session_id = self.headers.get("X-Session-ID") or query.get("session_id")
+            session_data = get_active_session(session_id)
+            if not session_data:
+                return self._send_response(401, {"error": "Sesión inválida o expirada"})
+
+            data = self._read_body_json()
+            key = data.get("key", "").strip()
+            if not key:
+                return self._send_response(400, {"error": "El nombre del archivo (key) es requerido"})
+
+            try:
+                s3_service.delete_object(
+                    bucket=session_data["target_bucket"],
+                    key=key,
+                    credentials=session_data["credentials"],
+                    session_id=session_id,
+                    session_meta=session_data
+                )
+                return self._send_response(200, {"status": "success", "message": f"Archivo '{key}' eliminado exitosamente"})
+            except ClientError as e:
+                code = e.response["Error"]["Code"]
+                return self._send_response(403 if code == "AccessDenied" else 500, {
+                    "error": code,
+                    "message": e.response["Error"]["Message"]
+                })
 
         # Prueba de acceso a bucket prohibido
         if path == "/api/test-forbidden":
