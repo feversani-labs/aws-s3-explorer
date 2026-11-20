@@ -17,6 +17,7 @@
             --danger: #ef4444;
             --warning: #f59e0b;
             --border: #475569;
+            --purple: #a855f7;
         }
 
         * {
@@ -34,7 +35,7 @@
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 1350px;
             margin: 0 auto;
         }
 
@@ -45,6 +46,8 @@
             padding-bottom: 20px;
             border-bottom: 1px solid var(--border);
             margin-bottom: 24px;
+            flex-wrap: wrap;
+            gap: 16px;
         }
 
         .logo-area h1 {
@@ -65,19 +68,65 @@
             font-weight: 700;
         }
 
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
         .badge-status {
-            background: rgba(34, 197, 94, 0.2);
+            padding: 5px 12px;
+            border-radius: 9999px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .badge-sandbox {
+            background: rgba(245, 158, 11, 0.15);
+            color: var(--warning);
+            border: 1px solid var(--warning);
+        }
+
+        .badge-prod {
+            background: rgba(34, 197, 94, 0.15);
             color: var(--success);
             border: 1px solid var(--success);
-            padding: 4px 12px;
+        }
+
+        .btn-mode-toggle {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+            padding: 6px 14px;
             border-radius: 6px;
             font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            width: auto;
+            margin-bottom: 0;
+        }
+
+        .btn-mode-toggle:hover {
+            background: var(--border);
+            border-color: var(--accent);
         }
 
         .grid {
             display: grid;
-            grid-template-columns: 350px 1fr;
+            grid-template-columns: 420px 1fr;
             gap: 24px;
+        }
+
+        @media (max-width: 960px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
         }
 
         .card {
@@ -99,20 +148,20 @@
 
         label {
             display: block;
-            font-size: 0.85rem;
+            font-size: 0.82rem;
             color: var(--text-secondary);
-            margin-bottom: 6px;
+            margin-bottom: 4px;
         }
 
-        input, select, button {
+        input, select, button, textarea {
             width: 100%;
-            padding: 10px 12px;
+            padding: 9px 12px;
             border-radius: 6px;
             border: 1px solid var(--border);
             background: var(--bg-card);
             color: var(--text-primary);
-            font-size: 0.95rem;
-            margin-bottom: 14px;
+            font-size: 0.9rem;
+            margin-bottom: 12px;
         }
 
         button {
@@ -137,6 +186,55 @@
             background: #b91c1c;
         }
 
+        button.btn-secondary {
+            background: var(--bg-card);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+        }
+        button.btn-secondary:hover {
+            background: var(--border);
+            color: var(--accent);
+        }
+
+        .preset-bar {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+        }
+
+        .btn-preset {
+            width: auto;
+            margin: 0;
+            padding: 4px 10px;
+            font-size: 0.78rem;
+            background: rgba(56, 189, 248, 0.12);
+            color: var(--accent);
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            border-radius: 4px;
+            font-weight: 500;
+        }
+
+        .btn-preset:hover {
+            background: var(--accent);
+            color: #0f172a;
+        }
+
+        .code-block {
+            background: #090d16;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 10px;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+            font-size: 0.78rem;
+            color: #e2e8f0;
+            white-space: pre-wrap;
+            word-break: break-all;
+            margin-bottom: 12px;
+            max-height: 180px;
+            overflow-y: auto;
+        }
+
         .session-info {
             background: #0f172a;
             border-left: 4px solid var(--warning);
@@ -155,6 +253,19 @@
             font-weight: bold;
             color: var(--warning);
             font-size: 1.1rem;
+        }
+
+        .magic-link-box {
+            background: #090d16;
+            border: 1px dashed var(--accent);
+            padding: 10px;
+            border-radius: 6px;
+            margin-top: 10px;
+            margin-bottom: 10px;
+            word-break: break-all;
+            font-size: 0.8rem;
+            color: var(--accent);
+            font-family: monospace;
         }
 
         .file-list {
@@ -203,7 +314,7 @@
         table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 0.85rem;
+            font-size: 0.82rem;
             margin-top: 10px;
         }
 
@@ -237,10 +348,10 @@
         }
 
         .notice {
-            padding: 10px;
+            padding: 12px;
             border-radius: 6px;
-            margin-bottom: 14px;
-            font-size: 0.85rem;
+            margin-bottom: 16px;
+            font-size: 0.88rem;
         }
         .notice-error {
             background: rgba(239, 68, 68, 0.15);
@@ -252,55 +363,122 @@
             border: 1px solid var(--success);
             color: #86efac;
         }
+        .notice-info {
+            background: rgba(56, 189, 248, 0.15);
+            border: 1px solid var(--accent);
+            color: #bae6fd;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
             <div class="logo-area">
-                <h1>🗄️ S3 Explorer IDP <span class="tag">JIT Access</span></h1>
-                <p style="color: var(--text-secondary); font-size: 0.85rem;">Just-In-Time Ephemeral Session Platform</p>
+                <h1>🗄️ S3 Explorer IDP <span class="tag">JIT Platform</span></h1>
+                <p style="color: var(--text-secondary); font-size: 0.85rem;">Just-In-Time Ephemeral Sessions & Audit Platform</p>
             </div>
-            <div>
-                <span class="badge-status" id="envBadge">Mode: Sandbox</span>
+            <div class="header-actions">
+                <span class="badge-status badge-sandbox" id="envBadge">
+                    <span>🧪</span> <span id="envBadgeText">Modo Sandbox</span>
+                </span>
+                <button id="btnToggleMode" class="btn-mode-toggle" title="Alternar entre modo Sandbox y Producción">
+                    ⇄ Cambiar a Producción
+                </button>
             </div>
         </header>
 
         <div id="alertBox"></div>
 
         <div class="grid">
-            <!-- Panel Izquierdo: Gestión de Sesión -->
+            <!-- Panel Izquierdo: Gestión de Sesión / Sandbox Tester -->
             <div>
-                <div class="card">
-                    <h2>1. Solicitar Acceso JIT</h2>
-                    <label for="bucketSelect">Seleccionar Bucket:</label>
+                <!-- MODO SANDBOX: Probador de POST Dummy -->
+                <div class="card" id="sandboxCard">
+                    <h2>
+                        <span>🧪 Sandbox: Tester Webhook / POST</span>
+                        <span style="font-size: 0.75rem; color: var(--warning); font-weight: normal;">Simulador Dummy</span>
+                    </h2>
+                    <p style="color: var(--text-secondary); font-size: 0.8rem; margin-bottom: 12px;">
+                        Generá un POST dummy idéntico al enviado por Jira, Slack o CLI para crear sesiones JIT.
+                    </p>
+
+                    <div class="preset-bar">
+                        <button class="btn-preset" onclick="applyPreset('dev')">⚡ Dev Interno</button>
+                        <button class="btn-preset" onclick="applyPreset('secops')">🛡️ SecOps Audit</button>
+                        <button class="btn-preset" onclick="applyPreset('cross')">🏢 Cross-Account</button>
+                    </div>
+
+                    <label for="bucketInput">Nombre del Bucket S3:</label>
                     <input type="text" id="bucketInput" placeholder="ej: fvrsn-example-1-..." />
+
+                    <label for="emailInput">Correo del Solicitante:</label>
+                    <input type="email" id="emailInput" placeholder="ej: dev@empresa.com" />
+
+                    <label for="userInput">Usuario Solicitante:</label>
+                    <input type="text" id="userInput" placeholder="ej: dfeversani" />
+
+                    <label for="accountInput">AWS Account ID (Opcional - Rol Remoto):</label>
+                    <input type="text" id="accountInput" placeholder="Dejar vacío para cuenta local" />
 
                     <label for="durationSelect">Duración de la Sesión STS:</label>
                     <select id="durationSelect">
-                        <option value="900" selected>15 Minutos (Mínimo STS)</option>
-                        <option value="1800">30 Minutos</option>
-                        <option value="3600">1 Hora</option>
+                        <option value="15" selected>15 Minutos (Mínimo STS)</option>
+                        <option value="30">30 Minutos</option>
+                        <option value="60">1 Hora</option>
                     </select>
 
-                    <button id="btnCreateSession">Generar Sesión Efímera</button>
+                    <button id="btnCreateSession">🚀 Enviar POST /api/provision-session</button>
+
+                    <!-- Salida del Dummy POST en Sandbox -->
+                    <div id="sandboxResponseArea" style="display: none; margin-top: 14px;">
+                        <label>🔗 Magic Link Generado (Resultado del POST):</label>
+                        <div class="magic-link-box" id="magicLinkText"></div>
+                        <div style="display: flex; gap: 8px;">
+                            <button onclick="copyMagicLink()" class="btn-secondary" style="font-size: 0.8rem; padding: 7px; margin-bottom: 0;">📋 Copiar Link</button>
+                            <button onclick="activateCurrentMagicLink()" style="font-size: 0.8rem; padding: 7px; margin-bottom: 0;">⚡ Probar en Explorador</button>
+                        </div>
+
+                        <label style="margin-top: 12px;">Comando cURL equivalente:</label>
+                        <div class="code-block" id="curlSnippet"></div>
+                    </div>
                 </div>
 
+                <!-- MODO PRODUCCIÓN: Tarjeta Informativa / Carga Manual de Magic Link -->
+                <div class="card" id="prodWelcomeCard" style="display: none;">
+                    <h2>
+                        <span>🔒 Portal IDP (Producción)</span>
+                        <span class="status-pill status-ALLOWED">Activo</span>
+                    </h2>
+                    <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 14px;">
+                        En modo <strong>Producción</strong>, las sesiones efímeras se aprovisionan de forma segura mediante llamadas autenticadas de servicios externos (Slack Bot, Jira Service Desk, GitHub Actions o CLI).
+                    </p>
+                    <div class="notice notice-info" style="margin-bottom: 14px;">
+                        💡 Accedé directamente abriendo el <strong>Magic Link</strong> (<code>?session=UUID</code>) que recibiste en tu notificación de aprobación.
+                    </div>
+
+                    <label for="manualSessionInput">O pegá tu Magic Link / Session ID aquí:</label>
+                    <input type="text" id="manualSessionInput" placeholder="http://.../?session=abc123... o hash UUID" />
+                    <button id="btnLoadManualSession">Ingresar a Sesión</button>
+                </div>
+
+                <!-- Tarjeta de Sesión Activa (Común a ambos modos) -->
                 <div class="card" id="sessionCard">
                     <h2>2. Sesión Activa (STS)</h2>
                     <div id="noSessionNotice" style="color: var(--text-secondary); font-size: 0.85rem;">
-                        No hay ninguna sesión activa. Solicitá acceso para comenzar.
+                        No hay ninguna sesión activa. Ejecutá un POST en Sandbox o ingresá con un Magic Link.
                     </div>
                     <div id="activeSessionDetails" style="display: none;">
                         <div class="session-info session-active">
                             <strong>Bucket Asignado:</strong> <span id="sessBucket" style="color: var(--accent);"></span><br>
+                            <strong>Usuario:</strong> <span id="sessUser"></span> (<span id="sessEmail"></span>)<br>
+                            <strong>Cuenta AWS:</strong> <span id="sessAccount"></span><br>
                             <strong>Tiempo Restante:</strong> <span class="timer" id="sessTimer">--:--</span><br>
-                            <strong>Session ID:</strong> <span id="sessId" style="font-family: monospace; font-size: 0.8rem;"></span>
+                            <strong>Session Hash:</strong> <span id="sessId" style="font-family: monospace; font-size: 0.75rem;"></span>
                         </div>
                         <p style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 10px;">
-                            🔒 Credenciales restringidas con <strong>STS Session Policy</strong> exclusiva para este bucket.
+                            🔒 Credenciales restringidas en tiempo real con <strong>Session Policy</strong> exclusiva para este bucket.
                         </p>
-                        <button class="btn-danger" id="btnTestForbidden" style="font-size: 0.85rem; padding: 6px;">
+                        <button class="btn-danger" id="btnTestForbidden" style="font-size: 0.85rem; padding: 8px;">
                             🧪 Probar Acceso Cruzado (Verificar 403 Forbidden)
                         </button>
                     </div>
@@ -312,7 +490,7 @@
                 <div class="card">
                     <h2>
                         <span>3. Explorador de Archivos</span>
-                        <button id="btnRefresh" style="width: auto; padding: 4px 10px; font-size: 0.8rem; margin: 0;">↻ Refrescar</button>
+                        <button id="btnRefresh" class="btn-secondary" style="width: auto; padding: 4px 12px; font-size: 0.8rem; margin: 0;">↻ Refrescar</button>
                     </h2>
 
                     <div class="breadcrumbs" id="breadcrumbs">
@@ -321,7 +499,7 @@
 
                     <div id="fileExplorerContent">
                         <p style="color: var(--text-secondary); font-size: 0.9rem;">
-                            Crea una sesión efímera para inspeccionar objetos.
+                            Generá una sesión o abrí un Magic Link para inspeccionar objetos.
                         </p>
                     </div>
                 </div>
@@ -329,12 +507,14 @@
                 <div class="card">
                     <h2>4. Auditoría Fail-Closed (DynamoDB)</h2>
                     <p style="color: var(--text-secondary); font-size: 0.8rem; margin-bottom: 8px;">
-                        Cada operación se audita en tiempo real con TTL automático.
+                        Trazabilidad completa: Correo, Usuario, Cuenta AWS, Acción y Objeto con TTL nativo.
                     </p>
                     <table>
                         <thead>
                             <tr>
                                 <th>Timestamp</th>
+                                <th>Usuario / Email</th>
+                                <th>Cuenta AWS</th>
                                 <th>Acción</th>
                                 <th>Bucket / Key</th>
                                 <th>Estado</th>
@@ -342,7 +522,7 @@
                         </thead>
                         <tbody id="auditTableBody">
                             <tr>
-                                <td colspan="4" style="color: var(--text-secondary); text-align: center;">Sin registros aún.</td>
+                                <td colspan="6" style="color: var(--text-secondary); text-align: center;">Sin registros aún.</td>
                             </tr>
                         </tbody>
                     </table>
@@ -352,15 +532,40 @@
     </div>
 
     <script>
+        let currentMode = "sandbox"; // 'sandbox' o 'prod'
         let currentSession = null;
         let currentPrefix = "";
         let timerInterval = null;
+        let defaultBucket = "";
+        let defaultAccount = "";
+
+        // Elementos DOM
+        const envBadge = document.getElementById("envBadge");
+        const envBadgeText = document.getElementById("envBadgeText");
+        const btnToggleMode = document.getElementById("btnToggleMode");
+        const sandboxCard = document.getElementById("sandboxCard");
+        const prodWelcomeCard = document.getElementById("prodWelcomeCard");
 
         const bucketInput = document.getElementById("bucketInput");
+        const emailInput = document.getElementById("emailInput");
+        const userInput = document.getElementById("userInput");
+        const accountInput = document.getElementById("accountInput");
+        const durationSelect = document.getElementById("durationSelect");
         const btnCreateSession = document.getElementById("btnCreateSession");
+        const sandboxResponseArea = document.getElementById("sandboxResponseArea");
+        const magicLinkText = document.getElementById("magicLinkText");
+        const curlSnippet = document.getElementById("curlSnippet");
+
+        const manualSessionInput = document.getElementById("manualSessionInput");
+        const btnLoadManualSession = document.getElementById("btnLoadManualSession");
+
+        const sessionCard = document.getElementById("sessionCard");
         const activeSessionDetails = document.getElementById("activeSessionDetails");
         const noSessionNotice = document.getElementById("noSessionNotice");
         const sessBucket = document.getElementById("sessBucket");
+        const sessUser = document.getElementById("sessUser");
+        const sessEmail = document.getElementById("sessEmail");
+        const sessAccount = document.getElementById("sessAccount");
         const sessId = document.getElementById("sessId");
         const sessTimer = document.getElementById("sessTimer");
         const fileExplorerContent = document.getElementById("fileExplorerContent");
@@ -369,63 +574,225 @@
 
         function showAlert(msg, type = "success") {
             alertBox.innerHTML = `<div class="notice notice-${type}">${msg}</div>`;
-            setTimeout(() => { alertBox.innerHTML = ""; }, 5000);
+            setTimeout(() => { alertBox.innerHTML = ""; }, 6000);
         }
 
-        async function loadConfig() {
-            try {
-                const res = await fetch("/api/info");
-                const data = await res.json();
-                if (data.default_bucket) {
-                    bucketInput.value = data.default_bucket;
-                }
-                loadAudits();
-            } catch (e) {
-                console.error(e);
+        // Cambio de Modo (Sandbox vs Prod)
+        function setMode(mode) {
+            currentMode = mode;
+            localStorage.setItem("s3_explorer_mode", mode);
+
+            if (mode === "prod") {
+                envBadge.className = "badge-status badge-prod";
+                envBadge.innerHTML = "<span>🔒</span> <span>Modo Producción</span>";
+                btnToggleMode.innerHTML = "⇄ Activar Modo Sandbox";
+                sandboxCard.style.display = "none";
+                prodWelcomeCard.style.display = "block";
+            } else {
+                envBadge.className = "badge-status badge-sandbox";
+                envBadge.innerHTML = "<span>🧪</span> <span>Modo Sandbox</span>";
+                btnToggleMode.innerHTML = "⇄ Pasar a Producción";
+                sandboxCard.style.display = "block";
+                prodWelcomeCard.style.display = "none";
             }
         }
 
+        btnToggleMode.addEventListener("click", () => {
+            const nextMode = (currentMode === "sandbox") ? "prod" : "sandbox";
+            setMode(nextMode);
+            showAlert(`Cambiado a <strong>${nextMode === 'prod' ? 'Modo Producción' : 'Modo Sandbox'}</strong>`, "info");
+        });
+
+        // Presets para pruebas dummy en Sandbox
+        function applyPreset(presetType) {
+            const baseBucket = defaultBucket || "fvrsn-example-1-secops";
+            if (presetType === "dev") {
+                bucketInput.value = baseBucket;
+                emailInput.value = "dev-user@feversani.internal";
+                userInput.value = "developer";
+                accountInput.value = "";
+                durationSelect.value = "15";
+            } else if (presetType === "secops") {
+                bucketInput.value = baseBucket;
+                emailInput.value = "secops-audit@feversani.internal";
+                userInput.value = "secops-auditor";
+                accountInput.value = "";
+                durationSelect.value = "30";
+            } else if (presetType === "cross") {
+                bucketInput.value = "fvrsn-cross-account-storage";
+                emailInput.value = "cloud-architect@empresa.com";
+                userInput.value = "arch-team";
+                accountInput.value = "123456789012";
+                durationSelect.value = "60";
+            }
+            updateCurlSnippet();
+            showAlert(`Preset <strong>${presetType}</strong> cargado en el formulario.`, "info");
+        }
+
+        function updateCurlSnippet() {
+            const bucket = bucketInput.value.trim() || "<BUCKET_NAME>";
+            const email = emailInput.value.trim() || "dev@empresa.com";
+            const username = userInput.value.trim() || "dev-user";
+            const accountId = accountInput.value.trim();
+            const duration = durationSelect.value;
+            const origin = window.location.origin || "http://localhost:8080";
+
+            const payload = {
+                bucket_name: bucket,
+                email: email,
+                username: username,
+                duration_minutes: parseInt(duration, 10)
+            };
+            if (accountId) payload.aws_account_id = accountId;
+
+            curlSnippet.innerText = `curl -X POST "${origin}/api/provision-session" \\\n  -H "Content-Type: application/json" \\\n  -d '${JSON.stringify(payload)}'`;
+        }
+
+        [bucketInput, emailInput, userInput, accountInput, durationSelect].forEach(el => {
+            el.addEventListener("input", updateCurlSnippet);
+            el.addEventListener("change", updateCurlSnippet);
+        });
+
+        async function initApp() {
+            // Cargar modo preferido o del backend
+            const savedMode = localStorage.getItem("s3_explorer_mode");
+            try {
+                const res = await fetch("/api/info");
+                const data = await res.json();
+                defaultBucket = data.default_bucket || "";
+                defaultAccount = data.default_account_id || "";
+
+                if (data.default_bucket) bucketInput.value = data.default_bucket;
+                if (data.default_account_id) accountInput.placeholder = `Actual: ${data.default_account_id}`;
+
+                // Si no hay preferencia en localStorage, usar la que viene del server
+                const initialMode = savedMode || data.mode || "sandbox";
+                setMode(initialMode);
+            } catch (e) {
+                console.error(e);
+                setMode(savedMode || "sandbox");
+            }
+
+            updateCurlSnippet();
+
+            // Detectar Magic Link (?session=UUID)
+            const params = new URLSearchParams(window.location.search);
+            const sessionParam = params.get("session");
+            if (sessionParam) {
+                await loadMagicLinkSession(sessionParam);
+            }
+
+            loadAudits();
+        }
+
+        async function loadMagicLinkSession(sessionId) {
+            try {
+                showAlert("Validando Magic Link...", "info");
+                const res = await fetch(`/api/sessions/validate?session=${encodeURIComponent(sessionId)}`);
+                const data = await res.json();
+                if (!res.ok) {
+                    throw new Error(data.error || "El link de sesión expiró o es inválido.");
+                }
+
+                currentSession = data;
+                renderActiveSession();
+                navigateTo("");
+                showAlert(`✅ Sesión cargada exitosamente para <strong>${data.email || data.username}</strong> en bucket <strong>${data.target_bucket}</strong>`, "success");
+            } catch (err) {
+                showAlert(err.message, "error");
+            }
+        }
+
+        // Aprovisionamiento POST en Sandbox
         btnCreateSession.addEventListener("click", async () => {
             const bucket = bucketInput.value.trim();
-            const duration = parseInt(document.getElementById("durationSelect").value, 10);
+            const email = emailInput.value.trim();
+            const username = userInput.value.trim();
+            const accountId = accountInput.value.trim();
+            const duration = parseInt(durationSelect.value, 10);
+
             if (!bucket) {
                 showAlert("Por favor ingresá un nombre de bucket.", "error");
                 return;
             }
 
             btnCreateSession.disabled = true;
-            btnCreateSession.innerText = "Asumiendo rol en STS...";
+            btnCreateSession.innerText = "⏳ Enviando POST /api/provision-session...";
 
             try {
-                const res = await fetch("/api/sessions", {
+                const res = await fetch("/api/provision-session", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ bucket_name: bucket, duration_seconds: duration })
+                    body: JSON.stringify({
+                        bucket_name: bucket,
+                        email: email,
+                        username: username,
+                        aws_account_id: accountId,
+                        duration_minutes: duration
+                    })
                 });
 
                 const data = await res.json();
                 if (!res.ok) {
-                    throw new Error(data.message || data.error || "Error al crear sesión");
+                    throw new Error(data.message || data.error || "Error al aprovisionar sesión");
                 }
 
                 currentSession = data;
                 renderActiveSession();
+
+                // Mostrar respuesta del Sandbox
+                sandboxResponseArea.style.display = "block";
+                magicLinkText.innerText = data.magic_link;
+
                 navigateTo("");
                 loadAudits();
-                showAlert("Sesión efímera creada exitosamente en STS.", "success");
+                showAlert("✨ Sesión aprovisionada con éxito vía POST dummy. Magic Link listo.", "success");
             } catch (err) {
                 showAlert(err.message, "error");
             } finally {
                 btnCreateSession.disabled = false;
-                btnCreateSession.innerText = "Generar Sesión Efímera";
+                btnCreateSession.innerText = "🚀 Enviar POST /api/provision-session";
             }
         });
+
+        // Carga manual desde Producción
+        btnLoadManualSession.addEventListener("click", async () => {
+            let val = manualSessionInput.value.trim();
+            if (!val) {
+                showAlert("Por favor pegá una URL de Magic Link o un Hash de sesión.", "error");
+                return;
+            }
+            if (val.includes("session=")) {
+                try {
+                    const parsedUrl = new URL(val);
+                    val = parsedUrl.searchParams.get("session") || val;
+                } catch (e) {
+                    const match = val.match(/session=([a-zA-Z0-9_-]+)/);
+                    if (match) val = match[1];
+                }
+            }
+            await loadMagicLinkSession(val);
+        });
+
+        function copyMagicLink() {
+            navigator.clipboard.writeText(magicLinkText.innerText);
+            showAlert("📋 Magic Link copiado al portapapeles!", "success");
+        }
+
+        function activateCurrentMagicLink() {
+            if (currentSession && currentSession.session_id) {
+                loadMagicLinkSession(currentSession.session_id);
+            }
+        }
 
         function renderActiveSession() {
             if (!currentSession) return;
             noSessionNotice.style.display = "none";
             activeSessionDetails.style.display = "block";
             sessBucket.innerText = currentSession.target_bucket;
+            sessUser.innerText = currentSession.username || "dev-user";
+            sessEmail.innerText = currentSession.email || "N/A";
+            sessAccount.innerText = currentSession.aws_account_id || "Cuenta Local";
             sessId.innerText = currentSession.session_id;
 
             if (timerInterval) clearInterval(timerInterval);
@@ -455,20 +822,21 @@
             updateBreadcrumbs();
 
             if (!currentSession) {
-                fileExplorerContent.innerHTML = "<p style='color: var(--text-secondary);'>Generá una sesión para ver archivos.</p>";
+                fileExplorerContent.innerHTML = "<p style='color: var(--text-secondary);'>Generá una sesión o abrí un Magic Link para ver archivos.</p>";
                 return;
             }
 
-            fileExplorerContent.innerHTML = "<p style='color: var(--text-secondary);'>Listando objetos vía STS...</p>";
+            fileExplorerContent.innerHTML = "<p style='color: var(--text-secondary);'>Listando objetos vía STS Session Policy...</p>";
 
             try {
-                const res = await fetch(`/api/objects?prefix=${encodeURIComponent(prefix)}`, {
+                const url = `/api/objects?prefix=${encodeURIComponent(prefix)}&session_id=${encodeURIComponent(currentSession.session_id)}`;
+                const res = await fetch(url, {
                     headers: { "X-Session-ID": currentSession.session_id }
                 });
                 const data = await res.json();
 
                 if (!res.ok) {
-                    throw new Error(data.message || "Error al listar objetos");
+                    throw new Error(data.message || data.error || "Error al listar objetos");
                 }
 
                 renderFiles(data);
@@ -496,7 +864,6 @@
         function renderFiles(data) {
             let html = "<ul class='file-list'>";
 
-            // Subdirectorios
             for (const dir of data.subdirectories || []) {
                 const name = dir.replace(data.prefix, "");
                 html += `
@@ -507,7 +874,6 @@
                 `;
             }
 
-            // Objetos
             for (const obj of data.objects || []) {
                 const name = obj.key.replace(data.prefix, "");
                 const sizeKb = (obj.size / 1024).toFixed(1);
@@ -520,7 +886,7 @@
             }
 
             if ((!data.subdirectories || data.subdirectories.length === 0) && (!data.objects || data.objects.length === 0)) {
-                html += `<li class="file-item" style="color: var(--text-secondary);">El bucket o prefijo está vacío.</li>`;
+                html += `<li class="file-item" style="color: var(--text-secondary);">El bucket está vacío.</li>`;
             }
 
             html += "</ul>";
@@ -530,12 +896,13 @@
         async function viewObject(key) {
             if (!currentSession) return;
             try {
-                const res = await fetch(`/api/objects/content?key=${encodeURIComponent(key)}`, {
+                const url = `/api/objects/content?key=${encodeURIComponent(key)}&session_id=${encodeURIComponent(currentSession.session_id)}`;
+                const res = await fetch(url, {
                     headers: { "X-Session-ID": currentSession.session_id }
                 });
                 if (!res.ok) {
                     const err = await res.json();
-                    throw new Error(err.message || "Error al descargar");
+                    throw new Error(err.message || err.error || "Error al descargar");
                 }
                 const text = await res.text();
                 alert(`Contenido de ${key}:\n\n` + text.slice(0, 500) + (text.length > 500 ? "\n..." : ""));
@@ -547,15 +914,16 @@
 
         document.getElementById("btnTestForbidden").addEventListener("click", async () => {
             if (!currentSession) return;
-            showAlert("Intentando acceder a un bucket no autorizado con la misma sesión...", "error");
+            showAlert("Intentando acceder a otro bucket con la misma sesión...", "error");
             try {
-                const res = await fetch(`/api/test-forbidden`, {
+                const url = `/api/test-forbidden?session_id=${encodeURIComponent(currentSession.session_id)}`;
+                const res = await fetch(url, {
                     method: "POST",
                     headers: { "X-Session-ID": currentSession.session_id }
                 });
                 const data = await res.json();
                 if (res.status === 403) {
-                    showAlert("✅ Frontera de seguridad verificada: AWS rechazó el acceso (403 AccessDenied) y fue auditado en DynamoDB.", "success");
+                    showAlert("✅ Frontera verificada: AWS STS rechazó el acceso (403 AccessDenied) y quedó auditado.", "success");
                 } else {
                     showAlert("Respuesta inesperada: " + JSON.stringify(data), "error");
                 }
@@ -578,6 +946,8 @@
                     auditTableBody.innerHTML = data.items.map(item => `
                         <tr>
                             <td>${new Date(item.timestamp * 1000).toLocaleTimeString()}</td>
+                            <td><strong>${item.username || 'dev'}</strong><br><small style="color:var(--text-secondary)">${item.email || ''}</small></td>
+                            <td><code>${item.aws_account_id || 'Local'}</code></td>
                             <td><code>${item.action}</code></td>
                             <td>${item.bucket} ${item.key ? ' / ' + item.key : ''}</td>
                             <td><span class="status-pill status-${item.status}">${item.status}</span></td>
@@ -589,7 +959,7 @@
             }
         }
 
-        loadConfig();
+        initApp();
     </script>
 </body>
 </html>

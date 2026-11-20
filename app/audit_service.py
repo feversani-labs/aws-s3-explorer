@@ -1,6 +1,6 @@
 """
 Audit Service: Registro Fail-Closed de sesiones y acciones sobre S3
-en DynamoDB con TTL automático.
+en DynamoDB con soporte multi-cuenta y auditoría enriquecida.
 """
 
 import os
@@ -19,7 +19,7 @@ class AuditService:
     def record_session(self, session_data: dict):
         """
         Registra la creación de una sesión efímera.
-        Incluye TTL en 'expires_at'.
+        Incluye email, username, aws_account_id y TTL en 'expires_at'.
         """
         if not self.table:
             return
@@ -29,36 +29,74 @@ class AuditService:
             "SK": "METADATA",
             "session_id": session_data["session_id"],
             "target_bucket": session_data["target_bucket"],
-            "user_identity": session_data.get("user_identity", "dev-user"),
+            "aws_account_id": session_data.get("aws_account_id", ""),
+            "email": session_data.get("email", ""),
+            "username": session_data.get("username", "dev-user"),
             "assumed_role_arn": session_data.get("assumed_role_arn", ""),
+            "credentials": session_data.get("credentials", {}),
             "created_at": int(time.time()),
-            "expires_at": session_data["expires_at"]
+            "expires_at": int(session_data["expires_at"])
         }
 
         try:
             self.table.put_item(Item=item)
+            # Registrar también en el historial de auditoría
+            self.record_audit_log(
+                session_id=session_data["session_id"],
+                action="sts:AssumeRole",
+                bucket=session_data["target_bucket"],
+                email=session_data.get("email", ""),
+                username=session_data.get("username", "dev-user"),
+                aws_account_id=session_data.get("aws_account_id", ""),
+                status="ALLOWED"
+            )
         except ClientError as e:
-            # En modo Fail-Closed, si falla la auditoría, la sesión no debe proceder
             raise RuntimeError(f"Fail-Closed: no se pudo registrar la sesión en DynamoDB: {e.response['Error']['Message']}")
 
-    def record_audit_log(self, session_id: str, action: str, bucket: str, key: str = "", status: str = "ALLOWED", error_message: str = ""):
+    def get_session(self, session_id: str):
         """
-        Registra cada operación ejecutada (ListObjects, GetObject, PutObject, etc.)
-        y su resultado (ALLOWED o DENIED).
+        Recupera la sesión y credenciales desde DynamoDB.
+        """
+        if not self.table:
+            return None
+        try:
+            resp = self.table.get_item(Key={
+                "PK": f"SESSION#{session_id}",
+                "SK": "METADATA"
+            })
+            item = resp.get("Item")
+            if item:
+                if "expires_at" in item:
+                    item["expires_at"] = int(item["expires_at"])
+                if "created_at" in item:
+                    item["created_at"] = int(item["created_at"])
+            return item
+        except Exception as e:
+            print(f"[AuditService] get_session error: {e}")
+            return None
+
+    def record_audit_log(self, session_id: str, action: str, bucket: str, key: str = "",
+                         email: str = "", username: str = "", aws_account_id: str = "",
+                         status: str = "ALLOWED", error_message: str = ""):
+        """
+        Registra cada operación ejecutada con correo, usuario, cuenta y bucket.
         """
         if not self.table:
             return
 
         now = int(time.time())
-        # El log de auditoría expira 24 horas después de la sesión
-        ttl = now + 86400
+        ttl = now + 86400  # Expira en 24h
 
         item = {
             "PK": f"SESSION#{session_id}",
             "SK": f"AUDIT#{now}#{action}",
+            "session_id": session_id,
             "action": action,
             "bucket": bucket,
             "key": key,
+            "email": email,
+            "username": username,
+            "aws_account_id": aws_account_id,
             "status": status,
             "error_message": error_message,
             "timestamp": now,
@@ -78,12 +116,11 @@ class AuditService:
             return []
 
         try:
-            # Escaneo simple limitado para la vista de auditoría del dashboard
             resp = self.table.scan(Limit=limit)
             items = resp.get("Items", [])
-            # Filtrar solo entradas de auditoría y ordenar por timestamp descendente
-            audit_items = [i for i in items if i.get("SK", "").startswith("AUDIT#")]
-            audit_items.sort(key=lambda x: x.get("timestamp", 0), reverse=True)
+            audit_items = [i for i in items if str(i.get("SK", "")).startswith("AUDIT#")]
+            audit_items.sort(key=lambda x: int(x.get("timestamp", 0)), reverse=True)
             return audit_items
-        except Exception:
+        except Exception as e:
+            print(f"[AuditService] scan error: {e}")
             return []

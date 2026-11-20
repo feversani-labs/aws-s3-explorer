@@ -1,12 +1,13 @@
 """
 Session Broker: Emisión de credenciales temporales STS
 acotadas dinámicamente mediante una Session Policy en línea exclusiva
-para el bucket solicitado (Principio de Mínimo Privilegio - Just-In-Time).
+para el bucket solicitado, con soporte para salto de rol multi-cuenta.
 """
 
 import json
 import os
 import time
+import uuid
 import boto3
 from botocore.exceptions import ClientError
 
@@ -18,12 +19,6 @@ class SessionBroker:
         self.sts_client = boto3.client("sts", region_name=self.region)
 
     def generate_session_policy(self, bucket_name: str) -> str:
-        """
-        Genera la Session Policy en línea estricta que recorta
-        los permisos del BrokerRole únicamente al bucket especificado.
-        Cualquier intento de acceder a otro bucket (incluso si el BrokerRole
-        lo permite como techo) será denegado por STS.
-        """
         policy = {
             "Version": "2012-10-17",
             "Statement": [
@@ -47,36 +42,45 @@ class SessionBroker:
         }
         return json.dumps(policy)
 
-    def create_ephemeral_session(self, bucket_name: str, duration_seconds: int = 900, user_identity: str = "dev-user") -> dict:
+    def create_ephemeral_session(self, bucket_name: str, duration_seconds: int = 900,
+                                 user_identity: str = "dev-user", email: str = "",
+                                 username: str = "", aws_account_id: str = "",
+                                 session_id: str = None) -> dict:
         """
-        Asume el BrokerRole aplicando la Session Policy generada dinámicamente.
-        Duración por defecto: 900 segundos (15 minutos, mínimo soportado por STS).
+        Asume el BrokerRole (local o cross-account) aplicando la Session Policy generada dinámicamente.
         """
-        if not self.broker_role_arn:
-            raise ValueError("BROKER_ROLE_ARN no está configurado en las variables de entorno.")
+        target_role_arn = self.broker_role_arn
 
-        session_name = f"s3-idp-{int(time.time())}"
+        # Soporte cross-account si se especifica aws_account_id
+        if aws_account_id and self.broker_role_arn:
+            role_name = self.broker_role_arn.split("/")[-1]
+            target_role_arn = f"arn:aws:iam::{aws_account_id}:role/{role_name}"
+
+        if not target_role_arn:
+            raise ValueError("BROKER_ROLE_ARN no está configurado.")
+
+        token_hash = session_id or uuid.uuid4().hex
+        session_name = f"s3-idp-{token_hash[:16]}"
         session_policy = self.generate_session_policy(bucket_name)
 
         try:
             response = self.sts_client.assume_role(
-                RoleArn=self.broker_role_arn,
+                RoleArn=target_role_arn,
                 RoleSessionName=session_name,
                 Policy=session_policy,
-                DurationSeconds=duration_seconds,
-                Tags=[
-                    {"Key": "CreatedBy", "Value": user_identity},
-                    {"Key": "TargetBucket", "Value": bucket_name}
-                ]
+                DurationSeconds=duration_seconds
             )
 
             credentials = response["Credentials"]
             expires_at = int(credentials["Expiration"].timestamp())
 
             return {
-                "session_id": session_name,
+                "session_id": token_hash,
                 "target_bucket": bucket_name,
-                "user_identity": user_identity,
+                "user_identity": user_identity or username or "dev-user",
+                "email": email,
+                "username": username or user_identity or "dev-user",
+                "aws_account_id": aws_account_id,
                 "assumed_role_arn": response["AssumedRoleUser"]["Arn"],
                 "expires_at": expires_at,
                 "duration_seconds": duration_seconds,

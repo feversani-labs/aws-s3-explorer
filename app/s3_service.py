@@ -1,6 +1,6 @@
 """
-S3 Service: Operaciones sobre S3 ejecutadas exclusivamente con las credenciales
-efímeras acotadas de la sesión y auditadas en DynamoDB.
+S3 Service: Operaciones sobre S3 ejecutadas con credenciales efímeras STS
+y auditoría enriquecida (email, usuario, cuenta de AWS) en DynamoDB.
 """
 
 import boto3
@@ -13,9 +13,6 @@ class S3Service:
         self.region = region
 
     def _get_client_with_creds(self, credentials: dict):
-        """
-        Instancia un cliente S3 usando únicamente las credenciales temporales STS.
-        """
         return boto3.client(
             "s3",
             region_name=self.region,
@@ -24,21 +21,25 @@ class S3Service:
             aws_session_token=credentials["session_token"]
         )
 
-    def list_objects(self, bucket: str, prefix: str = "", credentials: dict = None, session_id: str = "") -> dict:
-        """
-        Lista objetos dentro del bucket usando las credenciales STS.
-        Si las credenciales no tienen permiso sobre el bucket (e.g. forbidden-bucket),
-        AWS lanzará ClientError AccessDenied (403), el cual se audita como DENIED.
-        """
+    def list_objects(self, bucket: str, prefix: str = "", credentials: dict = None,
+                     session_id: str = "", session_meta: dict = None) -> dict:
+        meta = session_meta or {}
+        email = meta.get("email", "")
+        username = meta.get("username", "dev-user")
+        account_id = meta.get("aws_account_id", "")
+
         s3 = self._get_client_with_creds(credentials)
         action = "ListObjectsV2"
 
         try:
             response = s3.list_objects_v2(Bucket=bucket, Prefix=prefix, Delimiter="/")
-            
-            # Registrar auditoría exitosa
+
             if self.audit_service and session_id:
-                self.audit_service.record_audit_log(session_id, action, bucket, prefix, status="ALLOWED")
+                self.audit_service.record_audit_log(
+                    session_id=session_id, action=action, bucket=bucket, key=prefix,
+                    email=email, username=username, aws_account_id=account_id,
+                    status="ALLOWED"
+                )
 
             prefixes = [p.get("Prefix") for p in response.get("CommonPrefixes", [])]
             objects = []
@@ -61,13 +62,20 @@ class S3Service:
             error_code = e.response["Error"]["Code"]
             error_msg = e.response["Error"]["Message"]
             if self.audit_service and session_id:
-                self.audit_service.record_audit_log(session_id, action, bucket, prefix, status="DENIED", error_message=f"{error_code}: {error_msg}")
+                self.audit_service.record_audit_log(
+                    session_id=session_id, action=action, bucket=bucket, key=prefix,
+                    email=email, username=username, aws_account_id=account_id,
+                    status="DENIED", error_message=f"{error_code}: {error_msg}"
+                )
             raise e
 
-    def get_object(self, bucket: str, key: str, credentials: dict, session_id: str = "") -> bytes:
-        """
-        Obtiene el contenido de un archivo usando las credenciales STS.
-        """
+    def get_object(self, bucket: str, key: str, credentials: dict,
+                   session_id: str = "", session_meta: dict = None) -> bytes:
+        meta = session_meta or {}
+        email = meta.get("email", "")
+        username = meta.get("username", "dev-user")
+        account_id = meta.get("aws_account_id", "")
+
         s3 = self._get_client_with_creds(credentials)
         action = "GetObject"
 
@@ -76,20 +84,31 @@ class S3Service:
             content = resp["Body"].read()
 
             if self.audit_service and session_id:
-                self.audit_service.record_audit_log(session_id, action, bucket, key, status="ALLOWED")
+                self.audit_service.record_audit_log(
+                    session_id=session_id, action=action, bucket=bucket, key=key,
+                    email=email, username=username, aws_account_id=account_id,
+                    status="ALLOWED"
+                )
 
             return content
         except ClientError as e:
             error_code = e.response["Error"]["Code"]
             error_msg = e.response["Error"]["Message"]
             if self.audit_service and session_id:
-                self.audit_service.record_audit_log(session_id, action, bucket, key, status="DENIED", error_message=f"{error_code}: {error_msg}")
+                self.audit_service.record_audit_log(
+                    session_id=session_id, action=action, bucket=bucket, key=key,
+                    email=email, username=username, aws_account_id=account_id,
+                    status="DENIED", error_message=f"{error_code}: {error_msg}"
+                )
             raise e
 
-    def put_object(self, bucket: str, key: str, body: bytes, credentials: dict, session_id: str = ""):
-        """
-        Sube o actualiza un archivo usando las credenciales STS.
-        """
+    def put_object(self, bucket: str, key: str, body: bytes, credentials: dict,
+                   session_id: str = "", session_meta: dict = None):
+        meta = session_meta or {}
+        email = meta.get("email", "")
+        username = meta.get("username", "dev-user")
+        account_id = meta.get("aws_account_id", "")
+
         s3 = self._get_client_with_creds(credentials)
         action = "PutObject"
 
@@ -97,12 +116,20 @@ class S3Service:
             s3.put_object(Bucket=bucket, Key=key, Body=body)
 
             if self.audit_service and session_id:
-                self.audit_service.record_audit_log(session_id, action, bucket, key, status="ALLOWED")
+                self.audit_service.record_audit_log(
+                    session_id=session_id, action=action, bucket=bucket, key=key,
+                    email=email, username=username, aws_account_id=account_id,
+                    status="ALLOWED"
+                )
 
             return {"status": "success", "bucket": bucket, "key": key}
         except ClientError as e:
             error_code = e.response["Error"]["Code"]
             error_msg = e.response["Error"]["Message"]
             if self.audit_service and session_id:
-                self.audit_service.record_audit_log(session_id, action, bucket, key, status="DENIED", error_message=f"{error_code}: {error_msg}")
+                self.audit_service.record_audit_log(
+                    session_id=session_id, action=action, bucket=bucket, key=key,
+                    email=email, username=username, aws_account_id=account_id,
+                    status="DENIED", error_message=f"{error_code}: {error_msg}"
+                )
             raise e

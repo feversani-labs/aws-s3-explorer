@@ -6,7 +6,7 @@ TF_STATE_KEY ?= $(notdir $(CURDIR))/terraform.tfstate
 
 export AWS_PROFILE AWS_SHARED_CREDENTIALS_FILE AWS_REGION
 
-.PHONY: whoami init plan apply web deploy-app
+.PHONY: whoami init plan apply destroy docker-build docker-run
 
 whoami:
 	aws sts get-caller-identity
@@ -24,9 +24,11 @@ plan:
 apply:
 	terraform -chdir=terraform apply
 
-web:
-	@python3 scripts/dev_proxy.py
+destroy:
+	terraform -chdir=terraform destroy
 
-deploy-app:
-	@bash scripts/deploy_app.sh
+docker-build:
+	docker build -t feversani/aws-s3-explorer:latest .
 
+docker-run:
+	docker run --rm -it -p 8080:8080 feversani/aws-s3-explorer:latest

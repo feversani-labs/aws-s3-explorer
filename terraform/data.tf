@@ -1,21 +1,15 @@
-data "archive_file" "lambda_dummy" {
-  type        = "zip"
-  output_path = "${path.module}/.terraform/dummy_lambda.zip"
+data "aws_ami" "amazon_linux" {
+  most_recent = true
+  owners      = ["amazon"]
 
-  source {
-    content  = <<-EOF
-      import json
-
-      def handler(event, context):
-          return {
-              "statusCode": 200,
-              "headers": {"Content-Type": "application/json"},
-              "body": json.dumps({
-                  "status": "placeholder",
-                  "message": "Infraestructura lista. Esperando despliegue de la app."
-              })
-          }
-    EOF
-    filename = "lambda_function.py"
+  filter {
+    name   = "name"
+    values = ["al2023-ami-2023.*-x86_64"]
   }
 }
+
+data "aws_availability_zones" "available" {
+  state = "available"
+}
+
+data "aws_caller_identity" "current" {}

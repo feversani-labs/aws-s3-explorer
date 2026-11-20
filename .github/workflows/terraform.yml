@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - main
+    paths:
+      - "terraform/**"
   workflow_dispatch:
 
 jobs:
@@ -15,8 +17,8 @@ jobs:
     env:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      AWS_REGION: ${{ vars.REGION }}
-      TF_VAR_region: ${{ vars.REGION }}
+      AWS_REGION: ${{ vars.REGION || 'us-east-1' }}
+      TF_VAR_region: ${{ vars.REGION || 'us-east-1' }}
 
     steps:
       - name: Checkout code
@@ -25,16 +27,18 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
         with:
-          terraform_version: ${{ vars.TF_VERSION }}
+          terraform_version: ${{ vars.TF_VERSION || '1.6.0' }}
 
       - name: Terraform Init
         run: |
           BUCKET=$(aws ssm get-parameter --name "/ephemeral-aws-sandbox/tfstate/bucket_name" --query "Parameter.Value" --output text)
-          cd terraform
           terraform init \
             -backend-config="bucket=$BUCKET" \
             -backend-config="key=${{ github.event.repository.name }}/terraform.tfstate" \
-            -backend-config="region=${{ vars.REGION }}"
+            -backend-config="region=${AWS_REGION}"
+
+      - name: Terraform Plan
+        run: terraform plan
 
       - name: Terraform Apply
         run: terraform apply -auto-approve
